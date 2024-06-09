@@ -1,6 +1,4 @@
-# CLI CTRF Reports
-
-A CTRF CLI utility tool
+# CTRF CLI
 
 Various CTRF utilities available by command line
 

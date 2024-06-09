@@ -4,9 +4,9 @@
       "name": "webdriverio"
     },
     "summary": {
-      "tests": 4,
-      "passed": 2,
-      "failed": 2,
+      "tests": 2,
+      "passed": 1,
+      "failed": 1,
       "skipped": 0,
       "pending": 0,
       "other": 0,
@@ -43,16 +43,6 @@
         "suite": "My Login application",
         "filePath": "/Users/matthew/projects/personal/ctrf/wdio-tests/test/specs/test.e2e.ts",
         "browser": "chrome 121.0.6167.184"
-      },
-      {
-        "name": "should login with valid credentials",
-        "status": "passed",
-        "duration": 6292
-      },
-      {
-        "name": "should login with error valid credentials",
-        "status": "failed",
-        "duration": 10891
       }
     ]
   }
