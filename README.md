@@ -29,6 +29,8 @@ The only way we can grow CTRF is with your help and the support of the software 
 | Name         |Details                                                                              |
 | ------------ | ----------------------------------------------------------------------------------- |
 | `merge`      | Merge multiple CTRF reports into a single report.                                   |
+| `flaky`      | Output flaky test name and retries.                                                 |
+
 
 ## Merge
 
@@ -42,7 +44,7 @@ npx ctrf merge <directory>
 
 Replace `directory` with the path to the directory containing the CTRF reports you want to merge.
 
-## Options
+### Options
 
 -o, --output `filename`: Output file name for the merged report. Default is ctrf-report.json.
 
@@ -62,12 +64,27 @@ npx ctrf merge <directory> --output-dir /path/to/output
 npx ctrf merge <directory> --keep-reports
 ```
 
-## Example
+## Flaky
 
-Merge all CTRF reports in the ctrf directory into a single report named merged-report.json and save it in the output directory, keeping the original reports:
+The flaky command is useful for identifying tests marked as flaky in your CTRF report. Flaky tests are tests that pass or fail inconsistently and may require special attention or retries to determine their reliability.
+
+Usage
+To output flaky tests, use the following command:
 
 ```sh
-npx ctrf merge ctrf --output merged-report.json --output-dir output --keep-reports
+npx ctrf flaky <file-path>
+```
+
+Replace <file-path> with the path to the CTRF report file you want to analyze.
+
+### Output
+
+The command will output the names of the flaky tests and the number of retries each test has undergone. For example:
+
+```zsh
+Processing report: reports/sample-report.json
+Found 1 flaky test(s) in reports/sample-report.json:
+- Test Name: Test 1, Retries: 2
 ```
 
 ## What is CTRF?

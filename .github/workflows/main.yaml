@@ -20,3 +20,5 @@ jobs:
       run: npx tsc
     - name: Merge
       run: npx ctrf merge test-reports
+    - name: Flaky
+      run: npx ctrf flaky test-reports/ctrf-report-one.json

@@ -22,8 +22,8 @@
         "stop": 1708979377,
         "rawStatus": "passed",
         "type": "e2e",
-        "retry": 0,
-        "flake": false,
+        "retries": 5,
+        "flaky": true,
         "suite": "My Login application",
         "filePath": "/Users/matthew/projects/personal/ctrf/wdio-tests/test/specs/test.e2e.ts",
         "browser": "chrome 121.0.6167.184"
@@ -38,8 +38,8 @@
         "trace": "Error: Expect $(`#flash`) to have text containing\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 2\u001b[39m\n\n\u001b[32m- You\u001b[7m logged into a secure area!\u001b[27m\u001b[39m\n\u001b[31m+ You\u001b[7mr username is invalid!\u001b[27m\u001b[39m\n\u001b[31m+ ×\u001b[39m\n    at Context.<anonymous> (/Users/matthew/projects/personal/ctrf/wdio-tests/test/specs/test.e2e.ts:19:45)",
         "rawStatus": "failed",
         "type": "e2e",
-        "retry": 0,
-        "flake": false,
+        "retries": 0,
+        "flaky": false,
         "suite": "My Login application",
         "filePath": "/Users/matthew/projects/personal/ctrf/wdio-tests/test/specs/test.e2e.ts",
         "browser": "chrome 121.0.6167.184"
