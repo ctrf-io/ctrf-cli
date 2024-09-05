@@ -13,15 +13,23 @@ export async function mergeReports(directory: string, output: string, outputDir:
         const files = fs.readdirSync(directoryPath);
 
         files.forEach((file) => {
-            console.log('Found CTRF report file:', file);
+            console.log('Found file:', file);
         });
 
         const ctrfReportFiles = files.filter((file) => {
             try {
+                if (path.extname(file) !== '.json') {
+                    console.log(`Skipping non-CTRF file: ${file}`);
+                    return false;
+                }
                 const filePath = path.join(directoryPath, file);
                 const fileContent = fs.readFileSync(filePath, 'utf8');
                 const jsonData = JSON.parse(fileContent);
-                return jsonData.hasOwnProperty('results');
+                if (!jsonData.hasOwnProperty('results')) {
+                    console.log(`Skipping non-CTRF file: ${file}`);
+                    return false;
+                }
+                return true;
             } catch (error) {
                 console.error(`Error reading JSON file '${file}':`, error);
                 return false;
