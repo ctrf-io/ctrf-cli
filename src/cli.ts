@@ -2,8 +2,10 @@
 
 import yargs from 'yargs/yargs';
 import { hideBin } from 'yargs/helpers';
-import { mergeReports } from './merge';
+import { mergeReports as merge } from './merge';
 import { identifyFlakyTests } from './flaky';
+import { readReportsFromDirectory, readReportsFromGlobPattern } from './methods/read-reports';
+import { mergeReports } from './methods/merge-reports';
 
 const argv = yargs(hideBin(process.argv))
   .command(
@@ -35,7 +37,7 @@ const argv = yargs(hideBin(process.argv))
         });
     },
     async (argv) => {
-      await mergeReports(argv.directory as string, argv.output as string, argv['output-dir'] as string, argv['keep-reports'] as boolean);
+      await merge(argv.directory as string, argv.output as string, argv['output-dir'] as string, argv['keep-reports'] as boolean);
     }
   )
   .command(
@@ -56,3 +58,5 @@ const argv = yargs(hideBin(process.argv))
   .help()
   .demandCommand(1, 'You need at least one command before moving on')
   .argv;
+
+  export { mergeReports, readReportsFromDirectory, readReportsFromGlobPattern}
