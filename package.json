@@ -1,6 +1,6 @@
 {
   "name": "ctrf",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -16,6 +16,7 @@
   "author": "Matthew Thomas",
   "license": "MIT",
   "dependencies": {
+    "glob": "^11.0.1",
     "typescript": "^5.4.5",
     "yargs": "^17.7.2"
   },

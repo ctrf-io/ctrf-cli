@@ -1,6 +1,6 @@
 # CTRF CLI
 
-Various CTRF utilities available by command line
+Various CTRF utilities available programatically and by command line
 
 ## Help us grow CTRF
 
@@ -8,13 +8,12 @@ Various CTRF utilities available by command line
 
 **It means a lot to us and helps us grow this open source library.**
 
-## Utilities
+## Command Line Utilities
 
 | Name         |Details                                                                              |
 | ------------ | ----------------------------------------------------------------------------------- |
 | `merge`      | Merge multiple CTRF reports into a single report.                                   |
 | `flaky`      | Output flaky test name and retries.                                                 |
-
 
 ## Merge
 
@@ -70,6 +69,22 @@ Processing report: reports/sample-report.json
 Found 1 flaky test(s) in reports/sample-report.json:
 - Test Name: Test 1, Retries: 2
 ```
+
+## Programmatic Methods
+
+```sh
+npm install ctrf
+```
+
+The following programmatic methods are available:
+
+`mergeReports` - This method merges multiple CTRF reports into a single report.
+
+`readSingleReport` - Reads and parses a single CTRF report file from a specified file path.
+
+`readReportsFromDirectory` - Reads all CTRF report files from a given directory.
+
+`readReportsFromGlobPattern` - Reads all CTRF report files from a given glob pattern.
 
 ## What is CTRF?
 
