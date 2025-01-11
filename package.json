@@ -1,13 +1,13 @@
 {
   "name": "ctrf",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "main": "dist/index.js",
   "bin": {
-    "ctrf": "./dist/cli.js"
+    "ctrf": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc"
   },
   "files": [
     "dist/",
