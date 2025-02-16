@@ -13,6 +13,11 @@
     "dist/",
     "README.md"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ctrf-io/ctrf-cli"
+  },
+  "homepage": "https://ctrf.io",
   "author": "Matthew Thomas",
   "license": "MIT",
   "dependencies": {
