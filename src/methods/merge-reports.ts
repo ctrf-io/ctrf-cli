@@ -1,3 +1,4 @@
+// TO BE REMOVED, WILL USE THE CTRF LIBRARY INSTEAD
 import { CtrfReport, Summary } from "../../types/ctrf";
 
 /**

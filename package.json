@@ -1,7 +1,7 @@
 {
-  "name": "ctrf",
-  "version": "0.0.12",
-  "description": "",
+  "name": "ctrf-cli",
+  "version": "0.0.1",
+  "description": "Various CTRF utilities available from the command line",
   "main": "dist/index.js",
   "bin": {
     "ctrf": "dist/cli.js"
@@ -13,10 +13,7 @@
     "dist/",
     "README.md"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/ctrf-io/ctrf-cli"
-  },
+  "repository": "github:ctrf-io/ctrf-cli",
   "homepage": "https://ctrf.io",
   "author": "Matthew Thomas",
   "license": "MIT",
