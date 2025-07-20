@@ -1,3 +1,4 @@
+// TO BE REMOVED, WILL USE THE CTRF LIBRARY INSTEAD
 import fs from 'fs';
 import path from 'path';
 import { CtrfReport } from '../../types/ctrf';

@@ -1,6 +1,6 @@
 # CTRF CLI
 
-Various CTRF utilities available programatically and by command line
+Various CTRF utilities available from the command line
 
 <div align="center">
 <div style="padding: 1.5rem; border-radius: 8px; margin: 1rem 0; border: 1px solid #30363d;">
@@ -39,7 +39,7 @@ This might be useful if you need a single report, but your chosen reporter gener
 To merge CTRF reports in a specified directory, use the following command:
 
 ```sh
-npx ctrf merge <directory>
+npx ctrf-cli merge <directory>
 ```
 
 Replace `directory` with the path to the directory containing the CTRF reports you want to merge.
@@ -49,19 +49,19 @@ Replace `directory` with the path to the directory containing the CTRF reports y
 -o, --output `filename`: Output file name for the merged report. Default is ctrf-report.json.
 
 ```sh
-npx ctrf merge <directory> --output my-merged-report.json
+npx ctrf-cli merge <directory> --output my-merged-report.json
 ```
 
 -d, --output-dir `directory`: Output directory for the merged report. Default is the same directory as the input reports.
 
 ```sh
-npx ctrf merge <directory> --output-dir /path/to/output
+npx ctrf-cli merge <directory> --output-dir /path/to/output
 ```
 
 -k, --keep-reports: Keep existing reports after merging. By default, the original reports will be deleted after merging.
 
 ```sh
-npx ctrf merge <directory> --keep-reports
+npx ctrf-cli merge <directory> --keep-reports
 ```
 
 ## Flaky
@@ -72,7 +72,7 @@ Usage
 To output flaky tests, use the following command:
 
 ```sh
-npx ctrf flaky <file-path>
+npx ctrf-cli flaky <file-path>
 ```
 
 Replace <file-path> with the path to the CTRF report file you want to analyze.
@@ -86,22 +86,6 @@ Processing report: reports/sample-report.json
 Found 1 flaky test(s) in reports/sample-report.json:
 - Test Name: Test 1, Retries: 2
 ```
-
-## Programmatic Methods
-
-```sh
-npm install ctrf
-```
-
-The following programmatic methods are available:
-
-`mergeReports` - This method merges multiple CTRF reports into a single report.
-
-`readSingleReport` - Reads and parses a single CTRF report file from a specified file path.
-
-`readReportsFromDirectory` - Reads all CTRF report files from a given directory.
-
-`readReportsFromGlobPattern` - Reads all CTRF report files from a given glob pattern.
 
 ## What is CTRF?
 
