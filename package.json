@@ -7,13 +7,17 @@
     "ctrf": "dist/cli.js"
   },
   "scripts": {
-    "build": "tsc"
+    "build": "npx tsc",
+    "prepare": "npm run build"
+  },
+  "engines": {
+    "node": ">=20"
   },
   "files": [
     "dist/",
     "README.md"
   ],
-  "repository": "github:ctrf-io/ctrf-cli",
+  "repository": "github:etn-ccis/ctrf-cli",
   "homepage": "https://ctrf.io",
   "author": "Matthew Thomas",
   "license": "MIT",
