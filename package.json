@@ -1,19 +1,27 @@
 {
   "name": "ctrf-cli",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Various CTRF utilities available from the command line",
   "main": "dist/index.js",
   "bin": {
     "ctrf": "dist/cli.js"
   },
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "all": "npm run build"
   },
   "files": [
     "dist/",
     "README.md"
   ],
-  "repository": "github:ctrf-io/ctrf-cli",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ctrf-io/ctrf-cli.git"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "homepage": "https://ctrf.io",
   "author": "Matthew Thomas",
   "license": "MIT",
