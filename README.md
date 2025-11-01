@@ -41,7 +41,7 @@ This might be useful if you need a single report, but your chosen reporter gener
 To merge CTRF reports in a specified directory, use the following command:
 
 ```sh
-npx ctrf-cli@0.0.3 merge <directory>
+npx ctrf-cli@0.0.4 merge <directory>
 ```
 
 Replace `directory` with the path to the directory containing the CTRF reports you want to merge. Your merged report will be saved as `ctrf-report.json` in the same directory by default.
@@ -52,26 +52,26 @@ Replace `directory` with the path to the directory containing the CTRF reports y
 
 ```sh
 # Save with custom filename in input directory
-npx ctrf-cli@0.0.3 merge ./reports --output my-merged-report.json
+npx ctrf-cli@0.0.4 merge ./reports --output my-merged-report.json
 # Merged report saved to: ./reports/my-merged-report.json
 
 # Save with relative path from current directory
-npx ctrf-cli@0.0.3 merge ./reports --output ./output/merged.json
+npx ctrf-cli@0.0.4 merge ./reports --output ./output/merged.json
 # Merged report saved to: ./output/merged.json
 
 # Save to directory with default filename
-npx ctrf-cli@0.0.3 merge ./reports --output ./output/
+npx ctrf-cli@0.0.4 merge ./reports --output ./output/
 # Merged report saved to: ./output/ctrf-report.json
 
 # Save to absolute path
-npx ctrf-cli@0.0.3 merge ./reports --output /tmp/merged.json
+npx ctrf-cli@0.0.4 merge ./reports --output /tmp/merged.json
 # Merged report saved to: /tmp/merged.json
 ```
 
 -k, --keep-reports: Keep existing reports after merging. By default, the original reports will be deleted after merging.
 
 ```sh
-npx ctrf-cli@0.0.3 merge <directory> --keep-reports
+npx ctrf-cli@0.0.4 merge <directory> --keep-reports
 ```
 
 ## Flaky
@@ -82,7 +82,7 @@ Usage
 To output flaky tests, use the following command:
 
 ```sh
-npx ctrf-cli@0.0.3 flaky <file-path>
+npx ctrf-cli@0.0.4 flaky <file-path>
 ```
 
 Replace <file-path> with the path to the CTRF report file you want to analyze.
