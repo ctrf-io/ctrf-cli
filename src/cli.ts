@@ -36,13 +36,8 @@ const argv = yargs(hideBin(process.argv))
           default: false,
         })
     },
-    async argv => {
-      await mergeReports(
-        argv.directory as string,
-        argv.output as string,
-        argv['keep-reports'] as boolean,
-        argv['output-dir'] as string
-      )
+    async (argv) => {
+      await mergeReports(argv.directory as string, argv.output as string, argv['keep-reports'] as boolean, argv['output-dir'] as string);
     }
   )
   .command(
