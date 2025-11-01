@@ -1,0 +1,30 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  testing:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Install dependencies
+        run: npm install
+      - name: Lint
+        run: npm run lint
+      - name: Format check
+        run: npm run format:check
+      - name: Run tests with coverage
+        run: npm run test:coverage
+      - name: Build
+        run: npx tsc
+      - name: Merge
+        run: npx ctrf merge test-reports
+      - name: Flaky
+        run: npx ctrf flaky test-reports/ctrf-report-one.json
