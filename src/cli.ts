@@ -18,7 +18,7 @@ const argv = yargs(hideBin(process.argv))
         })
         .option('output', {
           alias: 'o',
-          describe: 'Output file name for merged report',
+          describe: 'Output file path (default: ctrf-report.json)',
           type: 'string',
           default: 'ctrf-report.json',
         })
@@ -26,6 +26,8 @@ const argv = yargs(hideBin(process.argv))
           alias: 'd',
           describe: 'Output directory for merged report',
           type: 'string',
+          hidden: true,
+          deprecated: 'Use --output with a path instead',
         })
         .option('keep-reports', {
           alias: 'k',
@@ -35,7 +37,7 @@ const argv = yargs(hideBin(process.argv))
         });
     },
     async (argv) => {
-      await mergeReports(argv.directory as string, argv.output as string, argv['output-dir'] as string, argv['keep-reports'] as boolean);
+      await mergeReports(argv.directory as string, argv.output as string, argv['keep-reports'] as boolean, argv['output-dir'] as string);
     }
   )
   .command(

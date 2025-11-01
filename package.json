@@ -1,6 +1,6 @@
 {
   "name": "ctrf-cli",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Various CTRF utilities available from the command line",
   "main": "dist/index.js",
   "bin": {

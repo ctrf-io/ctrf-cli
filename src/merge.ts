@@ -1,12 +1,32 @@
 import fs from 'fs';
 import path from 'path';
 
-export async function mergeReports(directory: string, output: string, outputDir: string, keepReports: boolean) {
+export async function mergeReports(directory: string, output: string, keepReports: boolean, outputDir?: string) {
     try {
         const directoryPath = path.resolve(directory);
-        const outputFileName = output;
-        const resolvedOutputDir = outputDir ? path.resolve(outputDir) : directoryPath;
-        const outputPath = path.join(resolvedOutputDir, outputFileName);
+        
+        let outputPath: string;
+        
+        if (outputDir) {
+            console.warn('Warning: --output-dir is deprecated. Use --output with a path instead.');
+            const outputFileName = output;
+            const resolvedOutputDir = path.resolve(outputDir);
+            outputPath = path.join(resolvedOutputDir, outputFileName);
+        } else if (output.includes('/') || output.includes('\\')) {
+            const resolvedPath = path.resolve(output);
+            
+            const endsWithSeparator = output.endsWith('/') || output.endsWith('\\');
+            const isExistingDirectory = fs.existsSync(resolvedPath) && fs.statSync(resolvedPath).isDirectory();
+            const hasNoExtension = path.extname(output) === '';
+            
+            if (endsWithSeparator || isExistingDirectory || hasNoExtension) {
+                outputPath = path.join(resolvedPath, 'ctrf-report.json');
+            } else {
+                outputPath = resolvedPath;
+            }
+        } else {
+            outputPath = path.join(directoryPath, output);
+        }
 
         console.log("Merging CTRF reports...");
 
@@ -41,9 +61,10 @@ export async function mergeReports(directory: string, output: string, outputDir:
             return;
         }
 
-        if (!fs.existsSync(resolvedOutputDir)) {
-            fs.mkdirSync(resolvedOutputDir, { recursive: true });
-            console.log(`Created output directory: ${resolvedOutputDir}`);
+        const outputDirPath = path.dirname(outputPath);
+        if (!fs.existsSync(outputDirPath)) {
+            fs.mkdirSync(outputDirPath, { recursive: true });
+            console.log(`Created output directory: ${outputDirPath}`);
         }
 
         const mergedReport = ctrfReportFiles
@@ -76,6 +97,7 @@ export async function mergeReports(directory: string, output: string, outputDir:
         fs.writeFileSync(outputPath, JSON.stringify(mergedReport, null, 2));
 
         if (!keepReports) {
+            const outputFileName = path.basename(outputPath);
             ctrfReportFiles.forEach((file) => {
                 const filePath = path.join(directoryPath, file);
                 if (file !== outputFileName) {
