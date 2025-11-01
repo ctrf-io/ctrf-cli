@@ -16,6 +16,12 @@ jobs:
       uses: actions/checkout@v4
     - name: Install dependencies
       run: npm install
+    - name: Lint
+      run: npm run lint
+    - name: Format check
+      run: npm run format:check
+    - name: Run tests with coverage
+      run: npm run test:coverage
     - name: Build
       run: npx tsc
     - name: Merge
