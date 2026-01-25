@@ -7,12 +7,13 @@ import {
   ValidationResult,
   ValidationError,
 } from 'ctrf'
-
-const EXIT_SUCCESS = 0
-const EXIT_GENERAL_ERROR = 1
-const EXIT_VALIDATION_FAILED = 2
-const EXIT_FILE_NOT_FOUND = 3
-const EXIT_INVALID_CTRF = 4
+import {
+  EXIT_SUCCESS,
+  EXIT_GENERAL_ERROR,
+  EXIT_VALIDATION_FAILED,
+  EXIT_FILE_NOT_FOUND,
+  EXIT_INVALID_CTRF,
+} from './exit-codes.js'
 
 export async function validateReport(
   filePath: string,

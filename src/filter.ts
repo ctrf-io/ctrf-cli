@@ -9,11 +9,12 @@ import {
   TestStatus,
   FilterCriteria,
 } from 'ctrf'
-
-const EXIT_SUCCESS = 0
-const EXIT_GENERAL_ERROR = 1
-const EXIT_FILE_NOT_FOUND = 3
-const EXIT_INVALID_CTRF = 4
+import {
+  EXIT_SUCCESS,
+  EXIT_GENERAL_ERROR,
+  EXIT_FILE_NOT_FOUND,
+  EXIT_INVALID_CTRF,
+} from './exit-codes.js'
 
 export interface FilterOptions {
   id?: string
