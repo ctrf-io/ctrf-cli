@@ -2,7 +2,6 @@ import fs from 'fs'
 import path from 'path'
 import { parse, addInsights, stringify, CTRFReport } from 'ctrf'
 
-// Exit codes as per specification
 const EXIT_SUCCESS = 0
 const EXIT_GENERAL_ERROR = 1
 const EXIT_FILE_NOT_FOUND = 3
@@ -72,8 +71,6 @@ export async function addInsightsCommand(
       const filePath = path.join(resolvedHistoricalDir, file)
       const resolvedFilePath = path.resolve(filePath)
 
-      // Skip current report if it appears in historical directory
-      // Use lowercase comparison for case-insensitive filesystems (Windows, macOS)
       if (
         resolvedFilePath.toLowerCase() === resolvedCurrentPath.toLowerCase()
       ) {

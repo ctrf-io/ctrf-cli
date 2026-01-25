@@ -2,7 +2,6 @@ import fs from 'fs'
 import path from 'path'
 import { parse, generateReportId, stringify, CTRFReport } from 'ctrf'
 
-// Exit codes as per specification
 const EXIT_SUCCESS = 0
 const EXIT_GENERAL_ERROR = 1
 const EXIT_FILE_NOT_FOUND = 3
@@ -36,16 +35,13 @@ export async function generateReportIdCommand(
       process.exit(EXIT_INVALID_CTRF)
     }
 
-    // Generate report ID using the library function
     const reportId = generateReportId()
 
-    // Build updated report with reportId at top level
     const updatedReport: CTRFReport = {
       ...report,
       reportId,
     }
 
-    // Output based on --output option
     const output = stringify(updatedReport)
 
     if (options.output) {
@@ -61,7 +57,6 @@ export async function generateReportIdCommand(
       console.error(`✓ Saved to ${options.output}`)
       process.exit(EXIT_SUCCESS)
     } else {
-      // Print to stdout for piping
       console.log(output)
       process.exit(EXIT_SUCCESS)
     }

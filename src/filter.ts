@@ -10,7 +10,6 @@ import {
   FilterCriteria,
 } from 'ctrf'
 
-// Exit codes as per specification
 const EXIT_SUCCESS = 0
 const EXIT_GENERAL_ERROR = 1
 const EXIT_FILE_NOT_FOUND = 3
@@ -38,7 +37,6 @@ export async function filterReport(
     let displayPath: string
 
     if (filePath === '-') {
-      // Read from stdin
       fileContent = await readStdin()
       displayPath = 'stdin'
     } else {
@@ -63,7 +61,6 @@ export async function filterReport(
       process.exit(EXIT_INVALID_CTRF)
     }
 
-    // Build filter criteria
     const criteria: FilterCriteria = {}
 
     if (options.id) {
@@ -75,7 +72,6 @@ export async function filterReport(
     }
 
     if (options.status) {
-      // Support comma-separated statuses (OR logic)
       const statuses = options.status
         .split(',')
         .map(s => s.trim() as TestStatus)
@@ -83,7 +79,6 @@ export async function filterReport(
     }
 
     if (options.tags) {
-      // Support comma-separated tags
       const tags = options.tags.split(',').map(t => t.trim())
       criteria.tags = tags
     }
@@ -91,9 +86,6 @@ export async function filterReport(
     if (options.suite) {
       criteria.suite = options.suite
     }
-
-    // Note: 'type' filtering is not supported by the library FilterCriteria
-    // If needed, filter manually after filterTests call
 
     if (options.browser) {
       criteria.browser = options.browser
@@ -107,15 +99,12 @@ export async function filterReport(
       criteria.flaky = options.flaky
     }
 
-    // Apply filters using the library function
     let filteredTests = filterTests(report, criteria)
 
-    // Apply type filter manually if specified (not in library FilterCriteria)
     if (options.type) {
       filteredTests = filteredTests.filter(test => test.type === options.type)
     }
 
-    // Build new valid CTRF report with filtered tests
     const filteredReport: CTRFReport = {
       ...report,
       results: {
@@ -125,7 +114,6 @@ export async function filterReport(
       },
     }
 
-    // Output based on --output option
     const output = stringify(filteredReport)
 
     if (options.output) {
@@ -143,7 +131,6 @@ export async function filterReport(
       console.error(`✓ Saved to ${options.output}`)
       process.exit(EXIT_SUCCESS)
     } else {
-      // Print to stdout for piping
       console.log(output)
       process.exit(EXIT_SUCCESS)
     }

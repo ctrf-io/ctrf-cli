@@ -8,7 +8,6 @@ import {
   ValidationError,
 } from 'ctrf'
 
-// Exit codes as per specification
 const EXIT_SUCCESS = 0
 const EXIT_GENERAL_ERROR = 1
 const EXIT_VALIDATION_FAILED = 2
@@ -40,7 +39,6 @@ export async function validateReport(
     }
 
     if (strict) {
-      // validateStrict throws ValidationError if invalid
       try {
         validateStrict(report)
         console.log(`✓ ${path.basename(filePath)} is valid CTRF (strict)`)
@@ -59,7 +57,6 @@ export async function validateReport(
         process.exit(EXIT_VALIDATION_FAILED)
       }
     } else {
-      // validate returns ValidationResult
       const validationResult: ValidationResult = validate(report)
 
       if (validationResult.valid) {

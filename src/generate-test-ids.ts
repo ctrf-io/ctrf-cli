@@ -2,7 +2,6 @@ import fs from 'fs'
 import path from 'path'
 import { parse, generateTestId, stringify, CTRFReport, Test } from 'ctrf'
 
-// Exit codes as per specification
 const EXIT_SUCCESS = 0
 const EXIT_GENERAL_ERROR = 1
 const EXIT_FILE_NOT_FOUND = 3
@@ -36,13 +35,11 @@ export async function generateTestIds(
       process.exit(EXIT_INVALID_CTRF)
     }
 
-    // Generate ID for each test using the library function
     const testsWithIds: Test[] = report.results.tests.map(test => ({
       ...test,
       id: generateTestId(test),
     }))
 
-    // Build updated report
     const updatedReport: CTRFReport = {
       ...report,
       results: {
@@ -51,7 +48,6 @@ export async function generateTestIds(
       },
     }
 
-    // Output based on --output option
     const output = stringify(updatedReport)
 
     if (options.output) {
@@ -67,7 +63,6 @@ export async function generateTestIds(
       console.error(`✓ Saved to ${options.output}`)
       process.exit(EXIT_SUCCESS)
     } else {
-      // Print to stdout for piping
       console.log(output)
       process.exit(EXIT_SUCCESS)
     }
