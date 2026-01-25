@@ -129,10 +129,7 @@
         "trace": "Error: Element not found: .dashboard-metrics\n    at waitForElement (test.js:45:10)\n    at Object.<anonymous> (dashboard.test.js:42:5)",
         "snippet": "const metrics = await page.locator('.dashboard-metrics');\nawait expect(metrics).toBeVisible();",
         "screenshot": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
-        "stdout": [
-          "Loading admin dashboard",
-          "Checking authentication"
-        ],
+        "stdout": ["Loading admin dashboard", "Checking authentication"],
         "stderr": [
           "Warning: Slow network detected",
           "Error: Timeout waiting for .dashboard-metrics"
