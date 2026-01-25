@@ -134,7 +134,6 @@ describe('filterReport', () => {
         result.results.tests.every((t: any) => t.tags?.includes('smoke'))
       ).toBe(true)
 
-      // Verify the output is a valid CTRF report
       expect(isCTRFReport(result)).toBe(true)
     })
   })
@@ -243,7 +242,6 @@ describe('filterReport', () => {
       const output = consoleLogSpy.mock.calls[0][0]
       const result = JSON.parse(output as string)
 
-      // Verify it's a valid CTRF structure
       expect(result.reportFormat).toBe('CTRF')
       expect(result.specVersion).toBeDefined()
       expect(result.results).toBeDefined()

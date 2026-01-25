@@ -49,7 +49,6 @@ describe('addInsightsCommand', () => {
     historicalReportsDir = path.join(tmpDir, 'historical')
     fs.mkdirSync(historicalReportsDir, { recursive: true })
 
-    // Create multiple historical reports
     fs.writeFileSync(
       path.join(historicalReportsDir, 'report1.json'),
       JSON.stringify(createReport(1, 8, 2), null, 2)
@@ -59,7 +58,6 @@ describe('addInsightsCommand', () => {
       JSON.stringify(createReport(2, 7, 3), null, 2)
     )
 
-    // Create current report
     currentReportPath = path.join(tmpDir, 'current-report.json')
     fs.writeFileSync(
       currentReportPath,
@@ -90,7 +88,6 @@ describe('addInsightsCommand', () => {
       const output = consoleLogSpy.mock.calls[0][0] as string
       const result = JSON.parse(output)
 
-      // Should have the report with insights
       expect(result.reportFormat).toBe('CTRF')
       expect(result.results).toBeDefined()
     })
@@ -174,7 +171,6 @@ describe('addInsightsCommand', () => {
     })
 
     it('should skip non-CTRF files with warning', async () => {
-      // Add a non-CTRF file
       fs.writeFileSync(
         path.join(historicalReportsDir, 'not-ctrf.json'),
         JSON.stringify({ foo: 'bar' })
@@ -183,12 +179,10 @@ describe('addInsightsCommand', () => {
       await addInsightsCommand(currentReportPath, historicalReportsDir)
       expect(exitSpy).toHaveBeenCalledWith(0)
 
-      // Should still succeed with valid reports
       expect(consoleLogSpy).toHaveBeenCalled()
     })
 
     it('should skip invalid JSON files', async () => {
-      // Add an invalid JSON file
       fs.writeFileSync(
         path.join(historicalReportsDir, 'invalid.json'),
         'not valid json'
@@ -197,7 +191,6 @@ describe('addInsightsCommand', () => {
       await addInsightsCommand(currentReportPath, historicalReportsDir)
       expect(exitSpy).toHaveBeenCalledWith(0)
 
-      // Should still succeed with valid reports
       expect(consoleLogSpy).toHaveBeenCalled()
     })
   })
@@ -216,19 +209,16 @@ describe('addInsightsCommand', () => {
 
   describe('current report in historical directory', () => {
     it('should exclude current report if it has the same absolute path', async () => {
-      // Create historical directory as parent of current report
       const parentDir = tmpDir
       const reportsDirAsParent = path.join(parentDir, 'reports')
       fs.mkdirSync(reportsDirAsParent, { recursive: true })
 
-      // Create a report in the parent (which will be in both places)
       const reportInParent = path.join(parentDir, 'report.json')
       fs.writeFileSync(
         reportInParent,
         JSON.stringify(createReport(1, 8, 2), null, 2)
       )
 
-      // Also create another historical report
       fs.writeFileSync(
         path.join(reportsDirAsParent, 'historical.json'),
         JSON.stringify(createReport(2, 7, 3), null, 2)
@@ -237,7 +227,6 @@ describe('addInsightsCommand', () => {
       await addInsightsCommand(reportInParent, reportsDirAsParent)
       expect(exitSpy).toHaveBeenCalledWith(0)
 
-      // Should succeed even if no actual historical reports (after exclusion)
       expect(consoleLogSpy).toHaveBeenCalled()
     })
   })

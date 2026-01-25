@@ -66,12 +66,10 @@ describe('generateTestIds', () => {
       await generateTestIds(reportPath)
       const output1 = JSON.parse(consoleLogSpy.mock.calls[0][0] as string)
 
-      // Reset spy and run again
       consoleLogSpy.mockClear()
       await generateTestIds(reportPath)
       const output2 = JSON.parse(consoleLogSpy.mock.calls[0][0] as string)
 
-      // IDs should be the same for the same test
       expect(output1.results.tests[0].id).toBe(output2.results.tests[0].id)
       expect(output1.results.tests[1].id).toBe(output2.results.tests[1].id)
       expect(output1.results.tests[2].id).toBe(output2.results.tests[2].id)
@@ -84,7 +82,6 @@ describe('generateTestIds', () => {
       const output = consoleLogSpy.mock.calls[0][0]
       const result = JSON.parse(output as string)
 
-      // Verify each test has a valid UUID (format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)
       const uuidRegex =
         /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
       result.results.tests.forEach((test: any) => {

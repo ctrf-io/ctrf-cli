@@ -31,7 +31,6 @@ describe('validateReport', () => {
     .build()
 
   const invalidReport = {
-    // Missing required fields
     results: {
       tests: [],
     },
@@ -46,7 +45,6 @@ describe('validateReport', () => {
     fs.writeFileSync(validReportPath, JSON.stringify(validReport, null, 2))
     fs.writeFileSync(invalidReportPath, JSON.stringify(invalidReport, null, 2))
 
-    // Mock process.exit to track exit codes without actually exiting
     exitSpy = vi
       .spyOn(process, 'exit')
       .mockImplementation((() => undefined as never) as any) as any
@@ -69,7 +67,6 @@ describe('validateReport', () => {
         expect.stringContaining('is valid CTRF')
       )
 
-      // Verify the report is actually valid using ctrf library's validate method
       const reportContent = fs.readFileSync(validReportPath, 'utf-8')
       const parsedReport = parse(reportContent)
       const result = validate(parsedReport)

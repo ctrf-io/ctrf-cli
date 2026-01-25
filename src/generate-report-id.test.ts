@@ -65,7 +65,6 @@ describe('generateReportIdCommand', () => {
       const output = consoleLogSpy.mock.calls[0][0] as string
       const result = JSON.parse(output as string)
 
-      // UUID v4 format: xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
       const uuidRegex =
         /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
       expect(uuidRegex.test(result.reportId)).toBe(true)
@@ -75,12 +74,10 @@ describe('generateReportIdCommand', () => {
       await generateReportIdCommand(reportPath)
       const output1 = JSON.parse(consoleLogSpy.mock.calls[0][0] as string)
 
-      // Reset spy and run again
       consoleLogSpy.mockClear()
       await generateReportIdCommand(reportPath)
       const output2 = JSON.parse(consoleLogSpy.mock.calls[0][0] as string)
 
-      // IDs should be different (UUID v4 is random)
       expect(output1.reportId).not.toBe(output2.reportId)
     })
 
