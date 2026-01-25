@@ -1,6 +1,6 @@
 {
   "name": "ctrf-cli",
-  "version": "0.0.4",
+  "version": "0.0.5-next-1",
   "description": "Various CTRF utilities available from the command line",
   "main": "dist/index.js",
   "bin": {
@@ -32,18 +32,19 @@
   "author": "Matthew Thomas",
   "license": "MIT",
   "dependencies": {
+    "ctrf": "^0.0.18-next-1",
     "glob": "^11.0.1",
     "typescript": "^5.4.5",
     "yargs": "^17.7.2"
   },
   "devDependencies": {
     "@d2t/vitest-ctrf-json-reporter": "^1.2.0",
-    "@types/node": "^20.12.7",
-    "@vitest/coverage-v8": "^3.2.4",
     "@eslint/js": "^9.32.0",
+    "@types/node": "^20.12.7",
+    "@types/yargs": "^17.0.32",
+    "@vitest/coverage-v8": "^3.2.4",
     "eslint": "^9.32.0",
     "prettier": "^3.5.3",
-    "@types/yargs": "^17.0.32",
     "typescript": "^5.4.5",
     "typescript-eslint": "^8.38.0",
     "vitest": "^3.2.4"

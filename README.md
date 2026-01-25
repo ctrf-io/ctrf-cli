@@ -1,112 +1,226 @@
-# CTRF CLI
+# CTRF CLI Reference Implementation
 
-Various CTRF utilities available from the command line
+A reference implementation of command line tooling for the [Common Test Report Format (CTRF)](https://github.com/ctrf-io/ctrf) specification.
 
-<div align="center">
-<div style="padding: 1.5rem; border-radius: 8px; margin: 1rem 0; border: 1px solid #30363d;">
-<span style="font-size: 23px;">💚</span>
-<h3 style="margin: 1rem 0;">CTRF tooling is open source and free to use</h3>
-<p style="font-size: 16px;">You can support the project with a follow and a star</p>
+## Open Standard
 
-<div style="margin-top: 1.5rem;">
-<a href="https://github.com/ctrf-io/ctrf-cli">
-<img src="https://img.shields.io/github/stars/ctrf-io/ctrf-cli?style=for-the-badge&color=2ea043" alt="GitHub stars">
-</a>
-<a href="https://github.com/ctrf-io">
-<img src="https://img.shields.io/github/followers/ctrf-io?style=for-the-badge&color=2ea043" alt="GitHub followers">
-</a>
-</div>
-</div>
+[CTRF](https://github.com/ctrf-io/ctrf) is an open standard built and shaped by community contributions.
 
-<p style="font-size: 14px; margin: 1rem 0;">
+Your feedback and contributions are essential to the project's success:
 
-Contributions are very welcome! <br/>
-Explore more <a href="https://www.ctrf.io/integrations">integrations</a> <br/>
-<a href="https://app.formbricks.com/s/cmefs524mhlh1tl01gkpvefrb">Let us know your thoughts</a>
+- [Contribute](CONTRIBUTING.md)
+- [Discuss](https://github.com/orgs/ctrf-io/discussions)
 
-</p>
-</div>
+## Support
 
-## Command Line Utilities
+You can support the project by giving this repository a star ⭐
 
-| Name         |Details                                                                              |
-| ------------ | ----------------------------------------------------------------------------------- |
-| `merge`      | Merge multiple CTRF reports into a single report.                                   |
-| `flaky`      | Output flaky test name and retries.                                                 |
-
-## Merge
-
-This might be useful if you need a single report, but your chosen reporter generates multiple reports through design, parallelisation or otherwise.
-
-To merge CTRF reports in a specified directory, use the following command:
+## Installation
 
 ```sh
-npx ctrf-cli@0.0.4 merge <directory>
+npx ctrf-cli@0.0.4 <command> [options]
 ```
 
-Replace `directory` with the path to the directory containing the CTRF reports you want to merge. Your merged report will be saved as `ctrf-report.json` in the same directory by default.
+Or install globally: `npm install -g ctrf-cli`
 
-### Options
+## Commands
 
--o, --output `path`: Output file path for the merged report. Can be a filename (saved in input directory), relative path from current working directory, or absolute path. Default is `ctrf-report.json`.
+| Command | Purpose |
+|---------|---------|
+| `merge` | Merge multiple CTRF reports into a single report |
+| `validate` | Validate a CTRF report against the JSON schema |
+| `validate-strict` | Strict validation with additionalProperties enforcement |
+| `filter` | Filter tests from a CTRF report based on criteria |
+| `generate-test-ids` | Generate deterministic UUIDs for all tests |
+| `generate-report-id` | Generate a unique UUID v4 identifier for report |
+| `add-insights` | Analyze trends and add insights across multiple reports |
+| `flaky` | Identify and output flaky tests |
+
+## Exit Codes
+
+- `0`: Command completed successfully
+- `1`: General error
+- `2`: Validation failed
+- `3`: File or directory not found
+- `4`: Invalid CTRF report
+- `5`: No CTRF reports found in directory
+
+## merge
+
+Combines multiple CTRF reports into a single unified report.
+
+**Syntax:**
 
 ```sh
-# Save with custom filename in input directory
-npx ctrf-cli@0.0.4 merge ./reports --output my-merged-report.json
-# Merged report saved to: ./reports/my-merged-report.json
-
-# Save with relative path from current directory
-npx ctrf-cli@0.0.4 merge ./reports --output ./output/merged.json
-# Merged report saved to: ./output/merged.json
-
-# Save to directory with default filename
-npx ctrf-cli@0.0.4 merge ./reports --output ./output/
-# Merged report saved to: ./output/ctrf-report.json
-
-# Save to absolute path
-npx ctrf-cli@0.0.4 merge ./reports --output /tmp/merged.json
-# Merged report saved to: /tmp/merged.json
+ctrf-cli merge <directory> [--output <path>] [--keep-reports]
 ```
 
--k, --keep-reports: Keep existing reports after merging. By default, the original reports will be deleted after merging.
+**Parameters:**
+
+- `directory`: Path to directory containing CTRF reports (required)
+- `--output, -o`: Output file path (default: ctrf-report.json)
+- `--keep-reports, -k`: Preserve original reports after merging
+
+**Example:**
 
 ```sh
-npx ctrf-cli@0.0.4 merge <directory> --keep-reports
+npx ctrf-cli@0.0.4 merge ./reports --output ./merged.json
 ```
 
-## Flaky
+## validate
 
-The flaky command is useful for identifying tests marked as flaky in your CTRF report. Flaky tests are tests that pass or fail inconsistently and may require special attention or retries to determine their reliability.
+Validates CTRF report conformance to the JSON Schema specification.
 
-Usage
-To output flaky tests, use the following command:
+**Syntax:**
 
 ```sh
-npx ctrf-cli@0.0.4 flaky <file-path>
+ctrf-cli validate <file-path>
+ctrf-cli validate-strict <file-path>
 ```
 
-Replace <file-path> with the path to the CTRF report file you want to analyze.
+**Parameters:**
 
-### Output
+- `file-path`: Path to CTRF report file (required)
 
-The command will output the names of the flaky tests and the number of retries each test has undergone. For example:
+**Modes:**
 
-```zsh
+- `validate`: Standard validation allowing additional properties
+- `validate-strict`: Strict validation enforcing additionalProperties: false
+
+**Example:**
+
+```sh
+npx ctrf-cli@0.0.4 validate report.json
+npx ctrf-cli@0.0.4 validate-strict report.json
+```
+
+## filter
+
+Extracts a subset of tests from a CTRF report based on specified criteria.
+
+**Syntax:**
+
+```sh
+ctrf-cli filter <file-path> [options]
+```
+
+**Parameters:**
+
+- `file-path`: Path to CTRF report (use `-` for stdin) (required)
+- `--id <uuid>`: Filter by test ID
+- `--name <string>`: Filter by test name (exact match)
+- `--status <statuses>`: Filter by status (comma-separated: passed,failed,skipped,pending,other)
+- `--tags <tags>`: Filter by tags (comma-separated)
+- `--suite <string>`: Filter by suite name (exact match)
+- `--type <string>`: Filter by test type
+- `--browser <string>`: Filter by browser
+- `--device <string>`: Filter by device
+- `--flaky`: Filter to flaky tests only
+- `--output, -o`: Output file path (default: stdout)
+
+**Examples:**
+
+```sh
+# Filter failed tests
+npx ctrf-cli@0.0.4 filter report.json --status failed
+
+# Filter by multiple criteria
+npx ctrf-cli@0.0.4 filter report.json --status failed,skipped --tags critical
+
+# Filter flaky tests and save
+npx ctrf-cli@0.0.4 filter report.json --flaky --output flaky-report.json
+
+# Read from stdin
+cat report.json | npx ctrf-cli@0.0.4 filter - --status failed
+```
+
+## generate-test-ids
+
+Generates deterministic UUID v5 identifiers for all tests in a report.
+
+**Syntax:**
+
+```sh
+ctrf-cli generate-test-ids <file-path> [--output <path>]
+```
+
+**Parameters:**
+
+- `file-path`: Path to CTRF report (use `-` for stdin) (required)
+- `--output, -o`: Output file path (default: stdout)
+
+**Example:**
+
+```sh
+npx ctrf-cli@0.0.4 generate-test-ids report.json --output report-with-ids.json
+```
+
+## generate-report-id
+
+Generates a unique UUID v4 identifier for a CTRF report.
+
+**Syntax:**
+
+```sh
+ctrf-cli generate-report-id <file-path> [--output <path>]
+```
+
+**Parameters:**
+
+- `file-path`: Path to CTRF report (required)
+- `--output, -o`: Output file path (default: stdout)
+
+**Example:**
+
+```sh
+npx ctrf-cli@0.0.4 generate-report-id report.json --output report-with-id.json
+```
+
+## add-insights
+
+Performs historical analysis across multiple CTRF reports to identify trends and patterns.
+
+**Syntax:**
+
+```sh
+ctrf-cli add-insights <directory> [--output <path>]
+```
+
+**Parameters:**
+
+- `directory`: Path to directory containing CTRF reports (required)
+- `--output, -o`: Output directory for enhanced reports (default: stdout)
+
+**Example:**
+
+```sh
+npx ctrf-cli@0.0.4 add-insights ./reports --output ./reports-with-insights
+```
+
+## flaky
+
+Identifies and reports tests marked as flaky in a CTRF report.
+
+**Syntax:**
+
+```sh
+ctrf-cli flaky <file-path>
+```
+
+**Parameters:**
+
+- `file-path`: Path to CTRF report file (required)
+
+**Example:**
+
+```sh
+npx ctrf-cli@0.0.4 flaky reports/sample-report.json
+```
+
+**Output:**
+
+```bash
 Processing report: reports/sample-report.json
 Found 1 flaky test(s) in reports/sample-report.json:
 - Test Name: Test 1, Retries: 2
 ```
-
-## What is CTRF?
-
-CTRF is a universal JSON test report schema that addresses the lack of a standardized format for JSON test reports.
-
-**Consistency Across Tools:** Different testing tools and frameworks often produce reports in varied formats. CTRF ensures a uniform structure, making it easier to understand and compare reports, regardless of the testing tool used.
-
-**Language and Framework Agnostic:** It provides a universal reporting schema that works seamlessly with any programming language and testing framework.
-
-**Facilitates Better Analysis:** With a standardized format, programatically analyzing test outcomes across multiple platforms becomes more straightforward.
-
-## Support Us
-
-If you find this project useful, consider giving it a GitHub star ⭐ It means a lot to us.
