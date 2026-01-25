@@ -5,6 +5,7 @@
   "description": "Various CTRF utilities available from the command line",
   "main": "dist/index.js",
   "bin": {
+    "ctrf": "dist/cli.js",
     "ctrf-cli": "dist/cli.js"
   },
   "scripts": {

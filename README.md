@@ -1,6 +1,6 @@
 # CTRF CLI Reference Implementation
 
-A reference implementation of command line tooling for the [Common Test Report Format (CTRF)](https://github.com/ctrf-io/ctrf) specification.
+Command line tooling for the [Common Test Report Format (CTRF)](https://github.com/ctrf-io/ctrf) specification.
 
 ## Open Standard
 
@@ -15,13 +15,29 @@ Your feedback and contributions are essential to the project's success:
 
 You can support the project by giving this repository a star ⭐
 
-## Installation
+## Usage
 
-```sh
-npx ctrf-cli@0.0.4 <command> [options]
+### Without Installation
+
+Use `npx` to run the CLI without installing:
+
+```bash
+npx ctrf-cli@0.0.5-next-1 validate report.json
 ```
 
-Or install globally: `npm install -g ctrf-cli`
+### Global Installation
+
+Or install globally for repeated use:
+
+```bash [npm]
+npm install -g ctrf-cli@0.0.5-next-1
+```
+
+After global installation, use the `ctrf` command:
+
+```bash
+ctrf validate report.json
+```
 
 ## Commands
 
