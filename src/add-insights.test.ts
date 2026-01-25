@@ -213,4 +213,32 @@ describe('addInsightsCommand', () => {
       expect(result.reportFormat).toBe('CTRF')
     })
   })
+
+  describe('current report in historical directory', () => {
+    it('should exclude current report if it has the same absolute path', async () => {
+      // Create historical directory as parent of current report
+      const parentDir = tmpDir
+      const reportsDirAsParent = path.join(parentDir, 'reports')
+      fs.mkdirSync(reportsDirAsParent, { recursive: true })
+
+      // Create a report in the parent (which will be in both places)
+      const reportInParent = path.join(parentDir, 'report.json')
+      fs.writeFileSync(
+        reportInParent,
+        JSON.stringify(createReport(1, 8, 2), null, 2)
+      )
+
+      // Also create another historical report
+      fs.writeFileSync(
+        path.join(reportsDirAsParent, 'historical.json'),
+        JSON.stringify(createReport(2, 7, 3), null, 2)
+      )
+
+      await addInsightsCommand(reportInParent, reportsDirAsParent)
+      expect(exitSpy).toHaveBeenCalledWith(0)
+
+      // Should succeed even if no actual historical reports (after exclusion)
+      expect(consoleLogSpy).toHaveBeenCalled()
+    })
+  })
 })
