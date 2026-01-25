@@ -1,4 +1,6 @@
 {
+  "reportFormat": "CTRF",
+  "specVersion": "1.0.0",
   "results": {
     "tool": {
       "name": "webdriverio"

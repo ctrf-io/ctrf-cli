@@ -1,4 +1,6 @@
 {
+  "reportFormat": "CTRF",
+  "specVersion": "1.0.0",
   "results": {
     "tool": {
       "name": "webdriverio"
@@ -25,7 +27,7 @@
         "retries": 5,
         "flaky": true,
         "suite": "My Login application",
-        "filePath": "/Users/matthew/projects/personal/ctrf/wdio-tests/test/specs/test.e2e.ts",
+        "filePath": "/wdio-tests/test/specs/test.e2e.ts",
         "browser": "chrome 121.0.6167.184"
       },
       {
@@ -41,7 +43,7 @@
         "retries": 0,
         "flaky": false,
         "suite": "My Login application",
-        "filePath": "/Users/matthew/projects/personal/ctrf/wdio-tests/test/specs/test.e2e.ts",
+        "filePath": "/wdio-tests/test/specs/test.e2e.ts",
         "browser": "chrome 121.0.6167.184"
       }
     ]
