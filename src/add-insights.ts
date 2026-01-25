@@ -6,48 +6,82 @@ import { parse, addInsights, stringify, CTRFReport } from 'ctrf'
 const EXIT_SUCCESS = 0
 const EXIT_GENERAL_ERROR = 1
 const EXIT_FILE_NOT_FOUND = 3
-const EXIT_NO_REPORTS = 5
 
 export interface AddInsightsOptions {
   output?: string
 }
 
 export async function addInsightsCommand(
-  directory: string,
+  currentReportPath: string,
+  historicalReportsDirectory: string,
   options: AddInsightsOptions = {}
 ): Promise<void> {
   try {
-    const resolvedDir = path.resolve(directory)
+    const resolvedCurrentPath = path.resolve(currentReportPath)
+    const resolvedHistoricalDir = path.resolve(historicalReportsDirectory)
 
-    if (!fs.existsSync(resolvedDir)) {
-      console.error(`Error: Directory not found: ${resolvedDir}`)
+    // Check current report file exists
+    if (!fs.existsSync(resolvedCurrentPath)) {
+      console.error(`Error: Report file not found: ${resolvedCurrentPath}`)
       process.exit(EXIT_FILE_NOT_FOUND)
     }
 
-    if (!fs.statSync(resolvedDir).isDirectory()) {
-      console.error(`Error: Path is not a directory: ${resolvedDir}`)
+    if (!fs.statSync(resolvedCurrentPath).isFile()) {
+      console.error(`Error: Path is not a file: ${resolvedCurrentPath}`)
       process.exit(EXIT_GENERAL_ERROR)
     }
 
-    // Read all JSON files from directory
-    const files = fs.readdirSync(resolvedDir)
-    const reports: CTRFReport[] = []
-    let totalTests = 0
+    // Check historical reports directory exists
+    if (!fs.existsSync(resolvedHistoricalDir)) {
+      console.error(`Error: Directory not found: ${resolvedHistoricalDir}`)
+      process.exit(EXIT_FILE_NOT_FOUND)
+    }
+
+    if (!fs.statSync(resolvedHistoricalDir).isDirectory()) {
+      console.error(`Error: Path is not a directory: ${resolvedHistoricalDir}`)
+      process.exit(EXIT_GENERAL_ERROR)
+    }
+
+    // Parse current report
+    let currentReport: CTRFReport
+    try {
+      const currentContent = fs.readFileSync(resolvedCurrentPath, 'utf-8')
+      currentReport = parse(currentContent)
+
+      if (
+        !currentReport ||
+        !currentReport.results ||
+        !currentReport.results.tests
+      ) {
+        console.error(`Error: Invalid CTRF report: ${resolvedCurrentPath}`)
+        process.exit(EXIT_GENERAL_ERROR)
+      }
+    } catch {
+      console.error(
+        `Error: Failed to parse current report: ${resolvedCurrentPath}`
+      )
+      process.exit(EXIT_GENERAL_ERROR)
+    }
+
+    // Read all JSON files from historical directory
+    const files = fs.readdirSync(resolvedHistoricalDir)
+    const historicalReports: CTRFReport[] = []
+    let totalHistoricalTests = 0
 
     for (const file of files) {
       if (path.extname(file) !== '.json') {
         continue
       }
 
-      const filePath = path.join(resolvedDir, file)
+      const filePath = path.join(resolvedHistoricalDir, file)
       try {
         const fileContent = fs.readFileSync(filePath, 'utf-8')
         const report = parse(fileContent)
 
         // Verify it's a valid CTRF report
         if (report && report.results && report.results.tests) {
-          reports.push(report)
-          totalTests += report.results.tests.length
+          historicalReports.push(report)
+          totalHistoricalTests += report.results.tests.length
         } else {
           console.warn(`Skipping non-CTRF file: ${file}`)
         }
@@ -56,16 +90,11 @@ export async function addInsightsCommand(
       }
     }
 
-    if (reports.length === 0) {
-      console.error('No valid CTRF reports found in the specified directory.')
-      process.exit(EXIT_NO_REPORTS)
+    if (historicalReports.length === 0) {
+      console.warn(
+        'No valid CTRF historical reports found in the specified directory.'
+      )
     }
-
-    // Add insights using the library function
-    // addInsights takes a current report and historical reports
-    // Use the last report as current, and all others as historical
-    const currentReport = reports[reports.length - 1]
-    const historicalReports = reports.slice(0, -1)
 
     const reportWithInsights = addInsights(currentReport, historicalReports)
 
@@ -81,7 +110,7 @@ export async function addInsightsCommand(
       fs.writeFileSync(outputPath, stringify(reportWithInsights), 'utf-8')
 
       console.error(
-        `✓ Analyzed ${reports.length} reports (${totalTests} total tests)`
+        `✓ Analyzed current report with ${historicalReports.length} historical report(s) (${totalHistoricalTests} total tests)`
       )
       console.error(
         `✓ Added insights including trends, patterns, and behavioral analysis`

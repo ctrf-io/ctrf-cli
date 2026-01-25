@@ -7,7 +7,8 @@ import { addInsightsCommand } from './add-insights.js'
 
 describe('addInsightsCommand', () => {
   let tmpDir: string
-  let reportsDir: string
+  let currentReportPath: string
+  let historicalReportsDir: string
   let exitSpy: ReturnType<typeof vi.spyOn>
   let consoleLogSpy: ReturnType<typeof vi.spyOn>
   let consoleErrorSpy: ReturnType<typeof vi.spyOn>
@@ -45,20 +46,23 @@ describe('addInsightsCommand', () => {
 
   beforeEach(() => {
     tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ctrf-insights-test-'))
-    reportsDir = path.join(tmpDir, 'reports')
-    fs.mkdirSync(reportsDir, { recursive: true })
+    historicalReportsDir = path.join(tmpDir, 'historical')
+    fs.mkdirSync(historicalReportsDir, { recursive: true })
 
-    // Create multiple reports for insights analysis
+    // Create multiple historical reports
     fs.writeFileSync(
-      path.join(reportsDir, 'report1.json'),
+      path.join(historicalReportsDir, 'report1.json'),
       JSON.stringify(createReport(1, 8, 2), null, 2)
     )
     fs.writeFileSync(
-      path.join(reportsDir, 'report2.json'),
+      path.join(historicalReportsDir, 'report2.json'),
       JSON.stringify(createReport(2, 7, 3), null, 2)
     )
+
+    // Create current report
+    currentReportPath = path.join(tmpDir, 'current-report.json')
     fs.writeFileSync(
-      path.join(reportsDir, 'report3.json'),
+      currentReportPath,
       JSON.stringify(createReport(3, 9, 1), null, 2)
     )
 
@@ -79,8 +83,8 @@ describe('addInsightsCommand', () => {
   })
 
   describe('insights generation', () => {
-    it('should process multiple reports and add insights', async () => {
-      await addInsightsCommand(reportsDir)
+    it('should analyze historical reports and add insights to current report', async () => {
+      await addInsightsCommand(currentReportPath, historicalReportsDir)
       expect(exitSpy).toHaveBeenCalledWith(0)
 
       const output = consoleLogSpy.mock.calls[0][0] as string
@@ -92,7 +96,7 @@ describe('addInsightsCommand', () => {
     })
 
     it('should produce valid CTRF output', async () => {
-      await addInsightsCommand(reportsDir)
+      await addInsightsCommand(currentReportPath, historicalReportsDir)
       expect(exitSpy).toHaveBeenCalledWith(0)
 
       const output = consoleLogSpy.mock.calls[0][0]
@@ -111,7 +115,9 @@ describe('addInsightsCommand', () => {
     it('should write to file when --output is specified', async () => {
       const outputPath = path.join(tmpDir, 'with-insights.json')
 
-      await addInsightsCommand(reportsDir, { output: outputPath })
+      await addInsightsCommand(currentReportPath, historicalReportsDir, {
+        output: outputPath,
+      })
       expect(exitSpy).toHaveBeenCalledWith(0)
 
       expect(fs.existsSync(outputPath)).toBe(true)
@@ -128,7 +134,7 @@ describe('addInsightsCommand', () => {
     })
 
     it('should print to stdout when no --output specified', async () => {
-      await addInsightsCommand(reportsDir)
+      await addInsightsCommand(currentReportPath, historicalReportsDir)
       expect(exitSpy).toHaveBeenCalledWith(0)
 
       expect(consoleLogSpy).toHaveBeenCalled()
@@ -138,34 +144,43 @@ describe('addInsightsCommand', () => {
   })
 
   describe('error handling', () => {
-    it('should exit with code 3 for directory not found', async () => {
-      const nonExistentPath = path.join(tmpDir, 'nonexistent')
-      await addInsightsCommand(nonExistentPath)
+    it('should exit with code 3 for current report not found', async () => {
+      const nonExistentReportPath = path.join(tmpDir, 'nonexistent.json')
+      await addInsightsCommand(nonExistentReportPath, historicalReportsDir)
+      expect(exitSpy).toHaveBeenCalledWith(3)
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Report file not found')
+      )
+    })
+
+    it('should exit with code 3 for historical directory not found', async () => {
+      const nonExistentDir = path.join(tmpDir, 'nonexistent')
+      await addInsightsCommand(currentReportPath, nonExistentDir)
       expect(exitSpy).toHaveBeenCalledWith(3)
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         expect.stringContaining('Directory not found')
       )
     })
 
-    it('should exit with code 5 when no valid reports found', async () => {
+    it('should warn but succeed when no valid historical reports found', async () => {
       const emptyDir = path.join(tmpDir, 'empty')
       fs.mkdirSync(emptyDir, { recursive: true })
 
-      await addInsightsCommand(emptyDir)
-      expect(exitSpy).toHaveBeenCalledWith(5)
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        expect.stringContaining('No valid CTRF reports found')
+      await addInsightsCommand(currentReportPath, emptyDir)
+      expect(exitSpy).toHaveBeenCalledWith(0)
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        expect.stringContaining('No valid CTRF historical reports found')
       )
     })
 
     it('should skip non-CTRF files with warning', async () => {
       // Add a non-CTRF file
       fs.writeFileSync(
-        path.join(reportsDir, 'not-ctrf.json'),
+        path.join(historicalReportsDir, 'not-ctrf.json'),
         JSON.stringify({ foo: 'bar' })
       )
 
-      await addInsightsCommand(reportsDir)
+      await addInsightsCommand(currentReportPath, historicalReportsDir)
       expect(exitSpy).toHaveBeenCalledWith(0)
 
       // Should still succeed with valid reports
@@ -174,9 +189,12 @@ describe('addInsightsCommand', () => {
 
     it('should skip invalid JSON files', async () => {
       // Add an invalid JSON file
-      fs.writeFileSync(path.join(reportsDir, 'invalid.json'), 'not valid json')
+      fs.writeFileSync(
+        path.join(historicalReportsDir, 'invalid.json'),
+        'not valid json'
+      )
 
-      await addInsightsCommand(reportsDir)
+      await addInsightsCommand(currentReportPath, historicalReportsDir)
       expect(exitSpy).toHaveBeenCalledWith(0)
 
       // Should still succeed with valid reports
@@ -184,16 +202,9 @@ describe('addInsightsCommand', () => {
     })
   })
 
-  describe('single report handling', () => {
-    it('should work with a single report', async () => {
-      const singleReportDir = path.join(tmpDir, 'single')
-      fs.mkdirSync(singleReportDir, { recursive: true })
-      fs.writeFileSync(
-        path.join(singleReportDir, 'report.json'),
-        JSON.stringify(createReport(1, 8, 2), null, 2)
-      )
-
-      await addInsightsCommand(singleReportDir)
+  describe('single historical report', () => {
+    it('should work with a single historical report', async () => {
+      await addInsightsCommand(currentReportPath, historicalReportsDir)
       expect(exitSpy).toHaveBeenCalledWith(0)
 
       const output = consoleLogSpy.mock.calls[0][0]

@@ -205,26 +205,35 @@ const argv = yargs(hideBin(process.argv))
     }
   )
   .command(
-    'add-insights <directory>',
-    'Analyze trends and add insights across multiple CTRF reports',
+    'add-insights <current-report> <historical-reports>',
+    'Analyze historical reports and add insights to current report',
     yargs => {
       return yargs
-        .positional('directory', {
-          describe: 'Path to directory containing CTRF reports',
+        .positional('current-report', {
+          describe: 'Path to the current CTRF report file to enhance',
+          type: 'string',
+          demandOption: true,
+        })
+        .positional('historical-reports', {
+          describe: 'Path to directory containing historical CTRF reports',
           type: 'string',
           demandOption: true,
         })
         .option('output', {
           alias: 'o',
           describe:
-            'Output directory for reports with insights (optional; defaults to stdout)',
+            'Output file path for report with insights (optional; defaults to stdout)',
           type: 'string',
         })
     },
     async argv => {
-      await addInsightsCommand(argv.directory as string, {
-        output: argv.output as string | undefined,
-      })
+      await addInsightsCommand(
+        argv['current-report'] as string,
+        argv['historical-reports'] as string,
+        {
+          output: argv.output as string | undefined,
+        }
+      )
     }
   )
   .help()

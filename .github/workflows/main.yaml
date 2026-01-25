@@ -50,7 +50,7 @@ jobs:
         run: node dist/cli.js generate-report-id examples/minimal.json
 
       - name: Test CLI - Add Insights
-        run: node dist/cli.js add-insights examples
+        run: node dist/cli.js add-insights examples/minimal.json examples
 
       - name: Publish Test Report
         uses: ctrf-io/github-test-reporter@v1

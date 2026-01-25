@@ -63,12 +63,12 @@ ctrf validate report.json
 
 ## merge
 
-Combines multiple CTRF reports into a single unified report.
+Combines multiple CTRF reports into a single unified report. **Writes to file.**
 
 **Syntax:**
 
 ```sh
-ctrf-cli merge <directory> [--output <path>] [--keep-reports]
+ctrf merge <directory> [--output <path>] [--keep-reports]
 ```
 
 **Parameters:**
@@ -80,18 +80,18 @@ ctrf-cli merge <directory> [--output <path>] [--keep-reports]
 **Example:**
 
 ```sh
-npx ctrf-cli@0.0.4 merge ./reports --output ./merged.json
+ctrf merge ./reports --output ./merged.json
 ```
 
 ## validate
 
-Validates CTRF report conformance to the JSON Schema specification.
+Validates CTRF report conformance to the JSON Schema specification. **Outputs to stdout.**
 
 **Syntax:**
 
 ```sh
-ctrf-cli validate <file-path>
-ctrf-cli validate-strict <file-path>
+ctrf validate <file-path>
+ctrf validate-strict <file-path>
 ```
 
 **Parameters:**
@@ -106,18 +106,18 @@ ctrf-cli validate-strict <file-path>
 **Example:**
 
 ```sh
-npx ctrf-cli@0.0.4 validate report.json
-npx ctrf-cli@0.0.4 validate-strict report.json
+ctrf validate report.json
+ctrf validate-strict report.json
 ```
 
 ## filter
 
-Extracts a subset of tests from a CTRF report based on specified criteria.
+Extracts a subset of tests from a CTRF report based on specified criteria. **Outputs to stdout or file.**
 
 **Syntax:**
 
 ```sh
-ctrf-cli filter <file-path> [options]
+ctrf filter <file-path> [options]
 ```
 
 **Parameters:**
@@ -132,95 +132,110 @@ ctrf-cli filter <file-path> [options]
 - `--browser <string>`: Filter by browser
 - `--device <string>`: Filter by device
 - `--flaky`: Filter to flaky tests only
-- `--output, -o`: Output file path (default: stdout)
+- `--output, -o`: Output file path (optional; defaults to stdout)
 
 **Examples:**
 
 ```sh
-# Filter failed tests
-npx ctrf-cli@0.0.4 filter report.json --status failed
+# Filter failed tests to stdout
+ctrf filter report.json --status failed
 
-# Filter by multiple criteria
-npx ctrf-cli@0.0.4 filter report.json --status failed,skipped --tags critical
+# Filter by multiple criteria and save to file
+ctrf filter report.json --status failed,skipped --tags critical --output filtered.json
 
 # Filter flaky tests and save
-npx ctrf-cli@0.0.4 filter report.json --flaky --output flaky-report.json
+ctrf filter report.json --flaky --output flaky-report.json
 
 # Read from stdin
-cat report.json | npx ctrf-cli@0.0.4 filter - --status failed
+cat report.json | ctrf filter - --status failed
 ```
 
 ## generate-test-ids
 
-Generates deterministic UUID v5 identifiers for all tests in a report.
+Generates deterministic UUID v5 identifiers for all tests in a report. **Outputs to stdout or file.**
 
 **Syntax:**
 
 ```sh
-ctrf-cli generate-test-ids <file-path> [--output <path>]
+ctrf generate-test-ids <file-path> [--output <path>]
 ```
 
 **Parameters:**
 
 - `file-path`: Path to CTRF report (use `-` for stdin) (required)
-- `--output, -o`: Output file path (default: stdout)
+- `--output, -o`: Output file path (optional; defaults to stdout)
 
 **Example:**
 
 ```sh
-npx ctrf-cli@0.0.4 generate-test-ids report.json --output report-with-ids.json
+# Output to stdout
+ctrf generate-test-ids report.json
+
+# Save to file
+ctrf generate-test-ids report.json --output report-with-ids.json
 ```
 
 ## generate-report-id
 
-Generates a unique UUID v4 identifier for a CTRF report.
+Generates a unique UUID v4 identifier for a CTRF report. **Outputs to stdout or file.**
 
 **Syntax:**
 
 ```sh
-ctrf-cli generate-report-id <file-path> [--output <path>]
+ctrf generate-report-id <file-path> [--output <path>]
 ```
 
 **Parameters:**
 
 - `file-path`: Path to CTRF report (required)
-- `--output, -o`: Output file path (default: stdout)
+- `--output, -o`: Output file path (optional; defaults to stdout)
 
 **Example:**
 
 ```sh
-npx ctrf-cli@0.0.4 generate-report-id report.json --output report-with-id.json
+# Output to stdout
+ctrf generate-report-id report.json
+
+# Save to file
+ctrf generate-report-id report.json --output report-with-id.json
 ```
 
 ## add-insights
 
-Performs historical analysis across multiple CTRF reports to identify trends and patterns.
+Analyzes historical test reports and adds insights metrics to the current report. **Writes to file (or stdout for piping).**
+
+Reads all CTRF reports in the historical reports directory and calculates trends, patterns, and metrics. Writes the enhanced current report with insights appended.
 
 **Syntax:**
 
 ```sh
-ctrf-cli add-insights <directory> [--output <path>]
+ctrf add-insights <current-report> <historical-reports> [--output <path>]
 ```
 
 **Parameters:**
 
-- `directory`: Path to directory containing CTRF reports (required)
-- `--output, -o`: Output directory for enhanced reports (default: stdout)
+- `current-report`: Path to the CTRF report file to enhance (required)
+- `historical-reports`: Path to directory containing historical CTRF reports for analysis (required)
+- `--output, -o`: Output file path for the report with insights (optional; defaults to stdout)
 
 **Example:**
 
 ```sh
-npx ctrf-cli@0.0.4 add-insights ./reports --output ./reports-with-insights
+# Analyze historical reports and enhance current report
+ctrf add-insights ./report.json ./historical-reports --output ./report-with-insights.json
+
+# Output enhanced report to stdout for piping
+ctrf add-insights ./report.json ./historical-reports | jq .
 ```
 
 ## flaky
 
-Identifies and reports tests marked as flaky in a CTRF report.
+Identifies and reports tests marked as flaky in a CTRF report. **Outputs to stdout.**
 
 **Syntax:**
 
 ```sh
-ctrf-cli flaky <file-path>
+ctrf flaky <file-path>
 ```
 
 **Parameters:**
@@ -230,7 +245,7 @@ ctrf-cli flaky <file-path>
 **Example:**
 
 ```sh
-npx ctrf-cli@0.0.4 flaky reports/sample-report.json
+ctrf flaky reports/sample-report.json
 ```
 
 **Output:**
