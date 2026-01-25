@@ -73,7 +73,10 @@ export async function addInsightsCommand(
       const resolvedFilePath = path.resolve(filePath)
 
       // Skip current report if it appears in historical directory
-      if (resolvedFilePath === resolvedCurrentPath) {
+      // Use lowercase comparison for case-insensitive filesystems (Windows, macOS)
+      if (
+        resolvedFilePath.toLowerCase() === resolvedCurrentPath.toLowerCase()
+      ) {
         console.warn(
           'Note: Current report found in historical reports directory and excluded from analysis'
         )
