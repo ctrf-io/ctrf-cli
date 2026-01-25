@@ -250,4 +250,117 @@ describe('filterReport', () => {
       expect(result.results.tests).toBeDefined()
     })
   })
+
+  describe('stdin input', () => {
+    it('should read from stdin when filePath is "-"', async () => {
+      const report = new ReportBuilder()
+        .tool({ name: 'test-tool' })
+        .addTest(
+          new TestBuilder()
+            .name('test 1')
+            .status('passed')
+            .duration(100)
+            .build()
+        )
+        .build()
+
+      const reportJson = stringify(report)
+
+      const stdinMock = {
+        setEncoding: vi.fn(),
+        on: vi.fn((event: string, callback: Function) => {
+          if (event === 'data') {
+            callback(reportJson)
+          } else if (event === 'end') {
+            callback()
+          }
+        }),
+      }
+
+      vi.spyOn(process, 'stdin', 'get').mockReturnValue(stdinMock as any)
+
+      await filterReport('-', { name: 'test 1' })
+
+      expect(exitSpy).toHaveBeenCalledWith(0)
+      expect(consoleLogSpy).toHaveBeenCalled()
+    })
+  })
+
+  describe('type filtering', () => {
+    it('should filter by type when manually specified', async () => {
+      const report = new ReportBuilder()
+        .tool({ name: 'test-tool' })
+        .addTest(
+          new TestBuilder()
+            .name('unit test')
+            .status('passed')
+            .duration(100)
+            .type('unit')
+            .build()
+        )
+        .addTest(
+          new TestBuilder()
+            .name('e2e test')
+            .status('passed')
+            .duration(100)
+            .type('e2e')
+            .build()
+        )
+        .build()
+
+      fs.writeFileSync(reportPath, stringify(report))
+
+      await filterReport(reportPath, { type: 'unit' })
+
+      expect(exitSpy).toHaveBeenCalledWith(0)
+
+      const output = consoleLogSpy.mock.calls[0][0]
+      const result = JSON.parse(output as string)
+
+      expect(result.results.tests).toHaveLength(1)
+      expect(result.results.tests[0].name).toBe('unit test')
+      expect(result.results.tests[0].type).toBe('unit')
+    })
+
+    it('should correctly update summary when type filtering', async () => {
+      const report = new ReportBuilder()
+        .tool({ name: 'test-tool' })
+        .addTest(
+          new TestBuilder()
+            .name('unit 1')
+            .status('passed')
+            .duration(100)
+            .type('unit')
+            .build()
+        )
+        .addTest(
+          new TestBuilder()
+            .name('unit 2')
+            .status('failed')
+            .duration(100)
+            .type('unit')
+            .build()
+        )
+        .addTest(
+          new TestBuilder()
+            .name('e2e test')
+            .status('passed')
+            .duration(100)
+            .type('e2e')
+            .build()
+        )
+        .build()
+
+      fs.writeFileSync(reportPath, stringify(report))
+
+      await filterReport(reportPath, { type: 'unit' })
+
+      const output = consoleLogSpy.mock.calls[0][0]
+      const result = JSON.parse(output as string)
+
+      expect(result.results.summary.tests).toBe(2)
+      expect(result.results.summary.passed).toBe(1)
+      expect(result.results.summary.failed).toBe(1)
+    })
+  })
 })

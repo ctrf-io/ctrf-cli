@@ -118,4 +118,78 @@ describe('validateReport', () => {
       )
     })
   })
+
+  describe('file not found', () => {
+    it('should exit with code 3 when file not found', async () => {
+      const nonExistentPath = path.join(tmpDir, 'nonexistent.json')
+      await validateReport(nonExistentPath)
+      expect(exitSpy).toHaveBeenCalledWith(3)
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('File not found')
+      )
+    })
+  })
+
+  describe('invalid JSON', () => {
+    it('should exit with code 4 for invalid CTRF JSON', async () => {
+      const invalidJsonPath = path.join(tmpDir, 'invalid.json')
+      fs.writeFileSync(invalidJsonPath, 'not valid json {')
+
+      await validateReport(invalidJsonPath)
+      expect(exitSpy).toHaveBeenCalledWith(4)
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Invalid CTRF report')
+      )
+    })
+  })
+
+  describe('strict mode error details', () => {
+    it('should display validation error paths in strict mode', async () => {
+      const reportWithPath = {
+        reportFormat: 'CTRF',
+        specVersion: '1.0.0',
+        results: {
+          tool: { name: 'test' },
+          summary: {},
+          tests: [],
+        },
+      }
+
+      fs.writeFileSync(
+        invalidReportPath,
+        JSON.stringify(reportWithPath, null, 2)
+      )
+
+      await validateReport(invalidReportPath, true)
+      expect(exitSpy).toHaveBeenCalledWith(2)
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('failed strict validation')
+      )
+    })
+  })
+
+  describe('standard mode error handling', () => {
+    it('should display validation errors without error.errors array', async () => {
+      const malformedReport = {
+        reportFormat: 'WRONG',
+        specVersion: '1.0.0',
+        results: {
+          tool: { name: 'test' },
+          summary: {},
+          tests: [],
+        },
+      }
+
+      fs.writeFileSync(
+        invalidReportPath,
+        JSON.stringify(malformedReport, null, 2)
+      )
+
+      await validateReport(invalidReportPath, false)
+      expect(exitSpy).toHaveBeenCalledWith(2)
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('failed validation')
+      )
+    })
+  })
 })
