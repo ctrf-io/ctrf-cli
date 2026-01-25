@@ -9,7 +9,7 @@ import {
   stringify,
   parse,
 } from 'ctrf'
-import { generateTestIds } from './generate-test-ids'
+import { generateTestIds } from './generate-test-ids.js'
 
 describe('generateTestIds', () => {
   let tmpDir: string

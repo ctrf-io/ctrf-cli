@@ -3,7 +3,7 @@ import fs from 'fs'
 import path from 'path'
 import os from 'os'
 import { ReportBuilder, TestBuilder, addInsights, stringify, parse } from 'ctrf'
-import { addInsightsCommand } from './add-insights'
+import { addInsightsCommand } from './add-insights.js'
 
 describe('addInsightsCommand', () => {
   let tmpDir: string

@@ -2,13 +2,13 @@
 
 import yargs from 'yargs/yargs'
 import { hideBin } from 'yargs/helpers'
-import { mergeReports } from './merge'
-import { identifyFlakyTests } from './flaky'
-import { validateReport } from './validate'
-import { filterReport } from './filter'
-import { generateTestIds } from './generate-test-ids'
-import { generateReportIdCommand } from './generate-report-id'
-import { addInsightsCommand } from './add-insights'
+import { mergeReports } from './merge.js'
+import { identifyFlakyTests } from './flaky.js'
+import { validateReport } from './validate.js'
+import { filterReport } from './filter.js'
+import { generateTestIds } from './generate-test-ids.js'
+import { generateReportIdCommand } from './generate-report-id.js'
+import { addInsightsCommand } from './add-insights.js'
 
 const argv = yargs(hideBin(process.argv))
   .command(

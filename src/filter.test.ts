@@ -10,7 +10,7 @@ import {
   stringify,
   parse,
 } from 'ctrf'
-import { filterReport } from './filter'
+import { filterReport } from './filter.js'
 
 describe('filterReport', () => {
   let tmpDir: string

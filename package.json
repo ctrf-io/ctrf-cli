@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "name": "ctrf-cli",
   "version": "0.0.5-next-1",
   "description": "Various CTRF utilities available from the command line",

@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import fs from 'fs'
 import path from 'path'
 import os from 'os'
-import { mergeReports } from './merge'
+import { mergeReports } from './merge.js'
 
 describe('mergeReports', () => {
   let tmpDir: string

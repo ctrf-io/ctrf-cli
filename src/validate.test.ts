@@ -10,7 +10,7 @@ import {
   stringify,
   parse,
 } from 'ctrf'
-import { validateReport } from './validate'
+import { validateReport } from './validate.js'
 
 describe('validateReport', () => {
   let tmpDir: string
