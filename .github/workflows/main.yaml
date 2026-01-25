@@ -35,22 +35,22 @@ jobs:
         run: node dist/cli.js merge test-reports
 
       - name: Test CLI - Validate
-        run: node dist/cli.js validate ctrf/ctrf-report.json
+        run: node dist/cli.js validate examples/minimal.json
 
       - name: Test CLI - Validate Strict
-        run: node dist/cli.js validate-strict ctrf/ctrf-report.json
+        run: node dist/cli.js validate-strict examples/minimal.json
 
       - name: Test CLI - Flaky
-        run: node dist/cli.js flaky test-reports/ctrf-report-one.json
+        run: node dist/cli.js flaky examples/with-retries.json
 
       - name: Test CLI - Generate Test IDs
-        run: node dist/cli.js generate-test-ids test-reports/ctrf-report-one.json
+        run: node dist/cli.js generate-test-ids examples/minimal.json
 
       - name: Test CLI - Generate Report ID
-        run: node dist/cli.js generate-report-id test-reports/ctrf-report-one.json
+        run: node dist/cli.js generate-report-id examples/minimal.json
 
       - name: Test CLI - Add Insights
-        run: node dist/cli.js add-insights test-reports
+        run: node dist/cli.js add-insights examples
 
       - name: Publish Test Report
         uses: ctrf-io/github-test-reporter@v1
