@@ -1,24 +1,121 @@
-name: Build
+name: Build and Test
 
 on:
   push:
-    branches:
-      - '**'
   pull_request:
-    branches:
-      - '**'
 
 jobs:
-  testing:
+  test:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.19.0, 21.x, 22.x, 23.x]
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    - name: Install dependencies
-      run: npm install
-    - name: Build
-      run: npx tsc
-    - name: Merge
-      run: npx ctrf-cli merge test-reports
-    - name: Flaky
-      run: npx ctrf-cli flaky test-reports/ctrf-report-one.json
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Run tests
+        run: npm test
+
+      - name: Test CLI - Merge
+        run: node dist/cli.js merge test-reports
+
+      - name: Test CLI - Validate
+        run: node dist/cli.js validate examples/minimal.json
+
+      - name: Test CLI - Validate Strict
+        run: node dist/cli.js validate-strict examples/minimal.json
+
+      - name: Test CLI - Flaky
+        run: node dist/cli.js flaky examples/with-retries.json
+
+      - name: Test CLI - Generate Test IDs
+        run: node dist/cli.js generate-test-ids examples/minimal.json
+
+      - name: Test CLI - Generate Report ID
+        run: node dist/cli.js generate-report-id examples/minimal.json
+
+      - name: Test CLI - Add Insights
+        run: node dist/cli.js add-insights examples/minimal.json examples
+
+      - name: Publish Test Report
+        uses: ctrf-io/github-test-reporter@v1
+        with:
+          report-path: "./ctrf/*.json"
+          summary-delta-report: true
+          github-report: true
+          failed-report: true
+          flaky-report: true
+          insights-report: true
+          fail-rate-report: true
+          flaky-rate-report: true
+          slowest-report: true
+          previous-results-report: true
+          upload-artifact: true
+          artifact-name: ctrf-test-report-${{ matrix.node-version }}
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: always()
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.19.0"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Run linter
+        run: npm run lint:check
+
+      - name: Check formatting
+        run: npm run format:check
+
+  security:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.19.0"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run security audit
+        run: npm audit --audit-level=moderate
+
+      - name: Check for known vulnerabilities
+        run: npx audit-ci --moderate
+    

@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import fs from 'fs'
 import path from 'path'
 import os from 'os'
-import { mergeReports } from './merge'
+import { mergeReports } from './merge.js'
 
 describe('mergeReports', () => {
   let tmpDir: string
@@ -199,8 +199,6 @@ describe('mergeReports', () => {
 
       const merged = JSON.parse(fs.readFileSync(outputPath, 'utf8'))
 
-      // report1 has start: 1708979371669, stop: 1708979388927
-      // report2 has start: 1708979400000, stop: 1708979410000
       expect(merged.results.summary.start).toBe(1708979371669)
       expect(merged.results.summary.stop).toBe(1708979410000)
     })

@@ -14,12 +14,12 @@ export async function identifyFlakyTests(filePath: string) {
     const report = JSON.parse(fileContent)
 
     const flakyTests = report.results.tests.filter(
-      (test: any) => test.flaky === true
+      (test: { flaky?: boolean }) => test.flaky === true
     )
 
     if (flakyTests.length > 0) {
       console.log(`Found ${flakyTests.length} flaky test(s):`)
-      flakyTests.forEach((test: any) => {
+      flakyTests.forEach((test: { name: string; retries?: number }) => {
         console.log(`- Test Name: ${test.name}, Retries: ${test.retries}`)
       })
     } else {
