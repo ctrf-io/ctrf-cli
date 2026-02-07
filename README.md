@@ -2,18 +2,20 @@
 
 Command line tooling for the [Common Test Report Format (CTRF)](https://github.com/ctrf-io/ctrf) specification.
 
-## Open Standard
+## CTRF Open Standard
 
-[CTRF](https://github.com/ctrf-io/ctrf) is an open standard built and shaped by community contributions.
+CTRF is a community-driven open standard for test reporting.
 
-Your feedback and contributions are essential to the project's success:
+By standardizing test results, reports can be validated, merged, compared, and analyzed consistently across languages and frameworks.
 
-- [Contribute](CONTRIBUTING.md)
-- [Discuss](https://github.com/orgs/ctrf-io/discussions)
+- **CTRF Specification**: https://github.com/ctrf-io/ctrf  
+  The official specification defining the format and semantics
+- **Discussions**: https://github.com/orgs/ctrf-io/discussions  
+  Community forum for questions, ideas, and support
 
-## Support
-
-You can support the project by giving this repository a star ⭐
+> [!NOTE]  
+> ⭐ Starring the **CTRF specification repository** (https://github.com/ctrf-io/ctrf)
+> helps support the standard.
 
 ## Usage
 
@@ -22,7 +24,7 @@ You can support the project by giving this repository a star ⭐
 Use `npx` to run the CLI without installing:
 
 ```bash
-npx ctrf-cli@0.0.5-next-1 validate report.json
+npx ctrf-cli@0.0.5 validate report.json
 ```
 
 ### Global Installation
@@ -30,7 +32,7 @@ npx ctrf-cli@0.0.5-next-1 validate report.json
 Or install globally for repeated use:
 
 ```bash [npm]
-npm install -g ctrf-cli@0.0.5-next-1
+npm install -g ctrf-cli@0.0.5
 ```
 
 After global installation, use the `ctrf` command:

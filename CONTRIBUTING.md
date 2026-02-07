@@ -22,6 +22,41 @@ If you don't see your idea listed, and you think it fits into the goals of this 
 3. Make sure your code lints.
 4. Issue that pull request!
 
+## Local Development
+
+To set up the project for local development:
+
+1. **Install dependencies**:
+
+   ```bash
+   npm install
+   ```
+
+2. **Run linting checks**:
+
+   ```bash
+   npm run lint:check
+   ```
+
+3. **Run formatting checks**:
+
+   ```bash
+   npm run format:check
+   ```
+
+4. **Run tests**:
+
+   ```bash
+   npm test
+   ```
+
+5. **Build the package**:
+   ```bash
+   npm run build
+   ```
+
+Make sure all checks pass before submitting a pull request.
+
 ### Commit Messages
 
 Write meaningful commit messages that provide insight into the changes made.
@@ -37,6 +72,10 @@ Feature requests are welcome. But take a moment to find out whether your idea fi
 ## License
 
 By contributing to this project, you agree that your contributions will be licensed under MIT.
+
+## Contributing to the CTRF Specification
+
+If you'd like to contribute to the CTRF specification itself, please see the [main CTRF repository](https://github.com/ctrf-io/ctrf).
 
 ## Acknowledgments
 

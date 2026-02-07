@@ -3,3 +3,9 @@ node_modules
 coverage
 ctrf
 .DS_Store
+agent
+agent.*
+skills
+skills.*
+instructions
+instructions.*
