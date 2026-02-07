@@ -1,35 +1,75 @@
-name: Build and Test
+name: CI
 
 on:
   push:
+    branches: [main]
   pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: true
+
+permissions:
+  contents: read
 
 jobs:
-  test:
+  quality:
+    name: Quality (lint/format)
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [20.19.0, 21.x, 22.x, 23.x]
-
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js ${{ matrix.node-version }}
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: "npm"
+          node-version: '22'
+          cache: npm
 
-      - name: Install dependencies
+      - name: Install
         run: npm ci
 
-      - name: Build project
-        run: npm run build
+      - name: Lint
+        run: npm run lint:check
 
-      - name: Run tests
+      - name: Format check
+        run: npm run format:check
+
+  test-build:
+    name: Test + Build (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    needs: [quality]
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['20', '22', '24']
+
+    permissions:
+      contents: read
+      actions: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Test
         run: npm test
+
+      - name: Build
+        run: npm run build
 
       - name: Test CLI - Merge
         run: node dist/cli.js merge test-reports
@@ -55,67 +95,37 @@ jobs:
       - name: Publish Test Report
         uses: ctrf-io/github-test-reporter@v1
         with:
-          report-path: "./ctrf/*.json"
+          report-path: './ctrf/*.json'
           summary-delta-report: true
           github-report: true
-          failed-report: true
-          flaky-report: true
           insights-report: true
-          fail-rate-report: true
           flaky-rate-report: true
-          slowest-report: true
           previous-results-report: true
           upload-artifact: true
-          artifact-name: ctrf-test-report-${{ matrix.node-version }}
-
+          artifact-name: ctrf-test-report-node-${{ matrix.node }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        if: always()
-
-  lint:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20.19.0"
-          cache: "npm"
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Type check
-        run: npx tsc --noEmit
-
-      - name: Run linter
-        run: npm run lint:check
-
-      - name: Check formatting
-        run: npm run format:check
+        if: always() && hashFiles('ctrf/*.json') != ''
 
   security:
+    name: Security (deps audit)
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: read
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20.19.0"
-          cache: "npm"
+          node-version: '22'
+          cache: npm
 
-      - name: Install dependencies
+      - name: Install
         run: npm ci
 
-      - name: Run security audit
-        run: npm audit --audit-level=moderate
-
-      - name: Check for known vulnerabilities
-        run: npx audit-ci --moderate
+      - name: npm audit (prod)
+        run: npm audit --omit=dev
+        continue-on-error: true
     

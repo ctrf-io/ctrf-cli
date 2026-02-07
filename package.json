@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "ctrf-cli",
-  "version": "0.0.5-next-1",
+  "version": "0.0.5",
   "description": "Various CTRF utilities available from the command line",
   "main": "dist/index.js",
   "bin": {
@@ -31,8 +31,24 @@
     "provenance": true
   },
   "homepage": "https://ctrf.io",
-  "author": "Matthew Thomas",
+  "author": "Matthew Poulton-White",
   "license": "MIT",
+  "security": {
+    "email": "security@ctrf.io",
+    "url": "https://github.com/ctrf-io/security/blob/main/SECURITY.md"
+  },
+  "keywords": [
+    "test",
+    "testing",
+    "ctrf",
+    "reporter",
+    "report",
+    "json",
+    "standard",
+    "cli",
+    "command-line",
+    "test-results"
+  ],
   "dependencies": {
     "ctrf": "^0.0.18-next-1",
     "glob": "^11.0.1",
