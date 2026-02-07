@@ -51,7 +51,7 @@
   ],
   "dependencies": {
     "ctrf": "^0.1.0",
-    "glob": "^11.0.1",
+    "glob": "^13.0.1",
     "typescript": "^5.4.5",
     "yargs": "^17.7.2"
   },
