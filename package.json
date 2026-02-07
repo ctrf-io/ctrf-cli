@@ -53,7 +53,7 @@
     "ctrf": "^0.0.18-next-1",
     "glob": "^11.0.1",
     "typescript": "^5.4.5",
-    "yargs": "^17.7.2"
+    "yargs": "^18.0.0"
   },
   "devDependencies": {
     "@d2t/vitest-ctrf-json-reporter": "^1.2.0",
