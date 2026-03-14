@@ -57,14 +57,14 @@
   },
   "devDependencies": {
     "@d2t/vitest-ctrf-json-reporter": "^1.2.0",
-    "@eslint/js": "^9.32.0",
+    "@eslint/js": "^10.0.1",
     "@types/node": "^25.0.10",
     "@types/yargs": "^17.0.32",
     "@vitest/coverage-v8": "^4.0.18",
-    "eslint": "^9.32.0",
+    "eslint": "^10.0.2",
     "prettier": "^3.5.3",
     "typescript": "^5.4.5",
-    "typescript-eslint": "^8.38.0",
+    "typescript-eslint": "^8.57.0",
     "vitest": "^4.0.18"
   }
 }
