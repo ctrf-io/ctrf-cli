@@ -52,7 +52,7 @@
   "dependencies": {
     "ctrf": "^0.2.0",
     "glob": "^13.0.1",
-    "typescript": "^5.4.5",
+    "typescript": "^6.0.3",
     "yargs": "^17.7.2"
   },
   "devDependencies": {
@@ -63,7 +63,7 @@
     "@vitest/coverage-v8": "^4.0.18",
     "eslint": "^10.0.2",
     "prettier": "^3.5.3",
-    "typescript": "^5.4.5",
+    "typescript": "^6.0.3",
     "typescript-eslint": "^8.57.0",
     "vitest": "^4.0.18"
   }
