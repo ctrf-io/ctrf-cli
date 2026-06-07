@@ -1,23 +1,24 @@
 {
-  "compilerOptions": {
-    "target": "ES2023",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "strict": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "declaration": true,
-    "declarationDir": "./dist",
-    "forceConsistentCasingInFileNames": true
-  },
-  "include": ["src/**/*"],
-  "exclude": [
-    "src/__tests__/**/*",
-    "dist/**/*",
-    "node_modules/**/*",
-    "src/test-utils/**/*",
-    "scripts/**/*"
-  ]
+	"compilerOptions": {
+		"target": "ES2023",
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"strict": true,
+		"esModuleInterop": true,
+		"allowSyntheticDefaultImports": true,
+		"outDir": "./dist",
+		"rootDir": "./src",
+		"declaration": true,
+		"declarationDir": "./dist",
+		"forceConsistentCasingInFileNames": true,
+		"types": ["node"]
+	},
+	"include": ["src/**/*"],
+	"exclude": [
+		"src/__tests__/**/*",
+		"dist/**/*",
+		"node_modules/**/*",
+		"src/test-utils/**/*",
+		"scripts/**/*"
+	]
 }
