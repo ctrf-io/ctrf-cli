@@ -66,6 +66,46 @@ describe("validateReport", () => {
 			expect(result.valid).toBe(true);
 		});
 
+		it("should validate current CTRF identity fields and labels", async () => {
+			const test = new TestBuilder()
+				.testId("authentication/login")
+				.executionId("execution-123")
+				.name("logs in")
+				.status("passed")
+				.duration(100)
+				.labels({ owners: ["qa", "platform"], priority: "high" })
+				.build();
+
+			test.retryAttempts = [
+				{ attempt: 1, attemptId: "attempt-1", status: "failed", duration: 50 },
+			];
+			test.attachments = [
+				{
+					attachmentId: "attachment-1",
+					name: "trace",
+					contentType: "text/plain",
+					path: "trace.txt",
+				},
+			];
+
+			const currentReport = new ReportBuilder()
+				.runId("run-123")
+				.tool({ name: "test-tool" })
+				.environment({ shardId: "shard-1-of-2" })
+				.addTest(test)
+				.build();
+			const currentReportPath = path.join(tmpDir, "current-report.json");
+			fs.writeFileSync(
+				currentReportPath,
+				JSON.stringify(currentReport, null, 2),
+			);
+
+			await validateReport(currentReportPath, false);
+
+			expect(exitSpy).toHaveBeenCalledWith(0);
+			expect(validate(currentReport).valid).toBe(true);
+		});
+
 		it("should reject an invalid CTRF report", async () => {
 			await validateReport(invalidReportPath, false);
 			expect(exitSpy).toHaveBeenCalledWith(2);

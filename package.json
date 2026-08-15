@@ -1,7 +1,7 @@
 {
 	"type": "module",
 	"name": "ctrf-cli",
-	"version": "0.0.5",
+	"version": "0.3.0",
 	"description": "Various CTRF utilities available from the command line",
 	"main": "dist/index.js",
 	"bin": {
@@ -54,7 +54,7 @@
 		"test-results"
 	],
 	"dependencies": {
-		"ctrf": "0.2.1",
+		"ctrf": "0.3.0",
 		"glob": "13.0.6",
 		"yargs": "18.1.0"
 	},
