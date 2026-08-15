@@ -24,7 +24,7 @@ By standardizing test results, reports can be validated, merged, compared, and a
 Use `npx` to run the CLI without installing:
 
 ```bash
-npx ctrf-cli@0.3.0 validate report.json
+npx ctrf-cli@0.3.1 validate report.json
 ```
 
 ### Global Installation
@@ -32,7 +32,7 @@ npx ctrf-cli@0.3.0 validate report.json
 Or install globally for repeated use:
 
 ```bash [npm]
-npm install -g ctrf-cli@0.3.0
+npm install -g ctrf-cli@0.3.1
 ```
 
 After global installation, use the `ctrf` command:
