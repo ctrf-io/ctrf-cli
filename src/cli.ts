@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import fs from "node:fs";
 import yargs from "yargs/yargs";
 import { hideBin } from "yargs/helpers";
 import { mergeReports } from "./merge.js";
@@ -10,7 +11,16 @@ import { generateTestIds } from "./generate-test-ids.js";
 import { generateReportIdCommand } from "./generate-report-id.js";
 import { addInsightsCommand } from "./add-insights.js";
 
+const packageMetadata = JSON.parse(
+	fs.readFileSync(new URL("../package.json", import.meta.url), "utf-8"),
+) as { version?: unknown };
+
+if (typeof packageMetadata.version !== "string") {
+	throw new Error("Unable to determine ctrf-cli version");
+}
+
 const _argv = yargs(hideBin(process.argv))
+	.version(packageMetadata.version)
 	.command(
 		"merge <directory>",
 		"Merge CTRF reports into a single report",

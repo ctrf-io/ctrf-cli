@@ -1,7 +1,7 @@
 {
 	"type": "module",
 	"name": "ctrf-cli",
-	"version": "0.3.0",
+	"version": "0.3.1",
 	"description": "Various CTRF utilities available from the command line",
 	"main": "dist/index.js",
 	"bin": {
@@ -9,15 +9,16 @@
 		"ctrf-cli": "dist/cli.js"
 	},
 	"scripts": {
-		"build": "tsc",
+		"build": "tsc && node scripts/bundle.mjs",
 		"test": "vitest run",
 		"test:coverage": "vitest run --coverage",
+		"test:package": "node scripts/package-smoke.mjs",
 		"lint": "biome lint --write . --unsafe",
 		"lint:check": "biome lint .",
 		"format": "biome format --write .",
 		"format:check": "biome format .",
 		"check": "biome check .",
-		"all": "npm run lint && npm run format:check && npm run test:coverage && npm run build"
+		"all": "npm run lint && npm run format:check && npm run test:coverage && npm run build && npm run test:package"
 	},
 	"files": [
 		"dist/",
@@ -54,8 +55,8 @@
 		"test-results"
 	],
 	"dependencies": {
-		"ctrf": "0.3.0",
-		"glob": "13.0.6",
+		"ajv": "8.20.0",
+		"ajv-formats": "3.0.1",
 		"yargs": "18.1.0"
 	},
 	"devDependencies": {
@@ -64,6 +65,8 @@
 		"@types/node": "26.2.0",
 		"@types/yargs": "17.0.35",
 		"@vitest/coverage-v8": "4.1.10",
+		"ctrf": "0.3.0",
+		"esbuild": "0.28.2",
 		"typescript": "7.0.2",
 		"vitest": "4.1.10"
 	}
