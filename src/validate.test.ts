@@ -2,7 +2,13 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
-import { ReportBuilder, TestBuilder, validate, parse } from "ctrf";
+import {
+	ReportBuilder,
+	TestBuilder,
+	validate,
+	parse,
+	type SchemaSelector,
+} from "ctrf";
 import { validateReport } from "./validate.js";
 
 describe("validateReport", () => {
@@ -79,6 +85,7 @@ describe("validateReport", () => {
 			test.retryAttempts = [
 				{ attempt: 1, attemptId: "attempt-1", status: "failed", duration: 50 },
 			];
+			test.retries = 1;
 			test.attachments = [
 				{
 					attachmentId: "attachment-1",
@@ -104,6 +111,51 @@ describe("validateReport", () => {
 
 			expect(exitSpy).toHaveBeenCalledWith(0);
 			expect(validate(currentReport).valid).toBe(true);
+		});
+
+		it.each(["0.0.1", "0.0.2", "0.0.3", "0.0.4", "0.1.0"] as const)(
+			"should validate against CTRF %s",
+			async (specVersion) => {
+				fs.writeFileSync(
+					validReportPath,
+					JSON.stringify({ ...validReport, specVersion }, null, 2),
+				);
+
+				await validateReport(validReportPath, false, specVersion);
+
+				expect(exitSpy).toHaveBeenCalledWith(0);
+				expect(consoleLogSpy).toHaveBeenCalledWith(
+					expect.stringContaining("is valid CTRF"),
+				);
+			},
+		);
+
+		it("should apply the selected historical schema", async () => {
+			const reportWithLabels = {
+				...validReport,
+				results: {
+					...validReport.results,
+					tests: [
+						{
+							name: "labeled test",
+							status: "passed",
+							duration: 100,
+							labels: { priority: "high" },
+						},
+					],
+				},
+			};
+			fs.writeFileSync(
+				validReportPath,
+				JSON.stringify(reportWithLabels, null, 2),
+			);
+
+			await validateReport(validReportPath, false, "0.0.1");
+			expect(exitSpy).toHaveBeenCalledWith(2);
+
+			exitSpy.mockClear();
+			await validateReport(validReportPath, false, "0.0.2");
+			expect(exitSpy).toHaveBeenCalledWith(0);
 		});
 
 		it("should reject an invalid CTRF report", async () => {
@@ -150,6 +202,21 @@ describe("validateReport", () => {
 				expect.stringContaining("failed strict validation"),
 			);
 		});
+
+		it("should honor the selected schema version", async () => {
+			const specVersion: SchemaSelector = "0.0.2";
+			fs.writeFileSync(
+				validReportPath,
+				JSON.stringify({ ...validReport, specVersion }, null, 2),
+			);
+
+			await validateReport(validReportPath, true, specVersion);
+
+			expect(exitSpy).toHaveBeenCalledWith(0);
+			expect(consoleLogSpy).toHaveBeenCalledWith(
+				expect.stringContaining("is valid CTRF (strict)"),
+			);
+		});
 	});
 
 	describe("file not found", () => {
@@ -180,7 +247,7 @@ describe("validateReport", () => {
 		it("should display validation error paths in strict mode", async () => {
 			const reportWithPath = {
 				reportFormat: "CTRF",
-				specVersion: "1.0.0",
+				specVersion: "0.1.0",
 				results: {
 					tool: { name: "test" },
 					summary: {},
@@ -205,7 +272,7 @@ describe("validateReport", () => {
 		it("should display validation errors without error.errors array", async () => {
 			const malformedReport = {
 				reportFormat: "WRONG",
-				specVersion: "1.0.0",
+				specVersion: "0.1.0",
 				results: {
 					tool: { name: "test" },
 					summary: {},

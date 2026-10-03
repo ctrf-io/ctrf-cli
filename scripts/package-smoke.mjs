@@ -21,6 +21,7 @@ const temporaryRoot = mkdtempSync(path.join(os.tmpdir(), "ctrf-cli-package-"));
 const packDirectory = path.join(temporaryRoot, "pack");
 const installDirectory = path.join(temporaryRoot, "install");
 const npmCacheDirectory = path.join(temporaryRoot, "npm-cache");
+const supportedSpecVersions = ["0.0.1", "0.0.2", "0.0.3", "0.0.4", "0.1.0"];
 
 function run(command, args, options = {}) {
 	const result = spawnSync(command, args, {
@@ -76,6 +77,20 @@ try {
 		"ctrf must not be installed as a production dependency",
 	);
 
+	for (const version of supportedSpecVersions) {
+		assert.equal(
+			existsSync(
+				path.join(
+					installDirectory,
+					"node_modules/ctrf-cli/dist",
+					`ctrf-schema-${version}.json`,
+				),
+			),
+			true,
+			`ctrf-schema-${version}.json must be included in the package`,
+		);
+	}
+
 	if (process.platform !== "win32") {
 		const expectedCli = realpathSync(
 			path.join(installDirectory, "node_modules/ctrf-cli/dist/cli.js"),
@@ -99,17 +114,42 @@ try {
 	assert.equal(versionResult.stdout.trim(), packageMetadata.version);
 
 	const validReport = path.join(projectRoot, "examples/minimal.json");
-	const validationResult = run(
+	for (const version of supportedSpecVersions) {
+		const validationResult = run(
+			"npx",
+			[
+				"--yes",
+				`--package=${tarballPath}`,
+				"ctrf",
+				"validate",
+				validReport,
+				"--spec-version",
+				version,
+			],
+			{ cwd: temporaryRoot },
+		);
+		assert.match(validationResult.stdout, /is valid CTRF/);
+	}
+
+	const latestValidationResult = run(
 		"npx",
-		["--yes", `--package=${tarballPath}`, "ctrf", "validate", validReport],
+		[
+			"--yes",
+			`--package=${tarballPath}`,
+			"ctrf-cli",
+			"validate-strict",
+			validReport,
+			"--spec-version",
+			"latest",
+		],
 		{ cwd: temporaryRoot },
 	);
-	assert.match(validationResult.stdout, /is valid CTRF/);
+	assert.match(latestValidationResult.stdout, /is valid CTRF \(strict\)/);
 
 	const invalidReport = path.join(temporaryRoot, "invalid.json");
 	writeFileSync(
 		invalidReport,
-		JSON.stringify({ reportFormat: "CTRF", specVersion: "1.0.0" }),
+		JSON.stringify({ reportFormat: "CTRF", specVersion: "0.1.0" }),
 	);
 	const invalidResult = run(
 		"npx",

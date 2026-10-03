@@ -24,7 +24,7 @@ By standardizing test results, reports can be validated, merged, compared, and a
 Use `npx` to run the CLI without installing:
 
 ```bash
-npx ctrf-cli@0.3.1 validate report.json
+npx ctrf-cli@0.4.0 validate report.json
 ```
 
 ### Global Installation
@@ -32,7 +32,7 @@ npx ctrf-cli@0.3.1 validate report.json
 Or install globally for repeated use:
 
 ```bash [npm]
-npm install -g ctrf-cli@0.3.1
+npm install -g ctrf-cli@0.4.0
 ```
 
 After global installation, use the `ctrf` command:
@@ -47,7 +47,7 @@ ctrf validate report.json
 |---------|---------|
 | `merge` | Merge multiple CTRF reports into a single report |
 | `validate` | Validate a CTRF report against the JSON schema |
-| `validate-strict` | Strict validation with additionalProperties enforcement |
+| `validate-strict` | Validate a report and throw on validation failure |
 | `filter` | Filter tests from a CTRF report based on criteria |
 | `generate-test-ids` | Generate deterministic UUIDs for all tests |
 | `generate-report-id` | Generate a unique UUID v4 identifier for report |
@@ -92,24 +92,26 @@ Validates CTRF report conformance to the JSON Schema specification. **Outputs to
 **Syntax:**
 
 ```sh
-ctrf validate <file-path>
-ctrf validate-strict <file-path>
+ctrf validate <file-path> [--spec-version <version>]
+ctrf validate-strict <file-path> [--spec-version <version>]
 ```
 
 **Parameters:**
 
 - `file-path`: Path to CTRF report file (required)
+- `--spec-version`: CTRF specification version to validate against. Supports `0.0.1`, `0.0.2`, `0.0.3`, `0.0.4`, `0.1.0`, and `latest` (default).
 
 **Modes:**
 
 - `validate`: Standard validation allowing additional properties
-- `validate-strict`: Strict validation enforcing additionalProperties: false
+- `validate-strict`: Uses the throwing validation API and prints detailed schema errors
 
 **Example:**
 
 ```sh
 ctrf validate report.json
 ctrf validate-strict report.json
+ctrf validate legacy-report.json --spec-version 0.0.2
 ```
 
 ## filter

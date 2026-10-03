@@ -4,6 +4,7 @@ import {
 	parse,
 	validate,
 	validateStrict,
+	type SchemaSelector,
 	type ValidationResult,
 	ValidationError,
 } from "ctrf";
@@ -18,6 +19,7 @@ import {
 export async function validateReport(
 	filePath: string,
 	strict: boolean = false,
+	specVersion: SchemaSelector = "latest",
 ): Promise<void> {
 	try {
 		const resolvedPath = path.resolve(filePath);
@@ -41,7 +43,7 @@ export async function validateReport(
 
 		if (strict) {
 			try {
-				validateStrict(report);
+				validateStrict(report, { specVersion });
 				console.log(`✓ ${path.basename(filePath)} is valid CTRF (strict)`);
 				process.exit(EXIT_SUCCESS);
 			} catch (error) {
@@ -58,7 +60,9 @@ export async function validateReport(
 				process.exit(EXIT_VALIDATION_FAILED);
 			}
 		} else {
-			const validationResult: ValidationResult = validate(report);
+			const validationResult: ValidationResult = validate(report, {
+				specVersion,
+			});
 
 			if (validationResult.valid) {
 				console.log(`✓ ${path.basename(filePath)} is valid CTRF`);

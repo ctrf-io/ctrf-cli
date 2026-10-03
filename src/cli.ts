@@ -3,6 +3,7 @@
 import fs from "node:fs";
 import yargs from "yargs/yargs";
 import { hideBin } from "yargs/helpers";
+import { SUPPORTED_SPEC_VERSIONS, type SchemaSelector } from "ctrf";
 import { mergeReports } from "./merge.js";
 import { identifyFlakyTests } from "./flaky.js";
 import { validateReport } from "./validate.js";
@@ -78,28 +79,50 @@ const _argv = yargs(hideBin(process.argv))
 		"validate <file>",
 		"Validate a CTRF report against the JSON schema",
 		(yargs) => {
-			return yargs.positional("file", {
-				describe: "Path to the CTRF report file to validate",
-				type: "string",
-				demandOption: true,
-			});
+			return yargs
+				.positional("file", {
+					describe: "Path to the CTRF report file to validate",
+					type: "string",
+					demandOption: true,
+				})
+				.option("spec-version", {
+					describe: "CTRF specification version to validate against",
+					type: "string",
+					choices: ["latest", ...SUPPORTED_SPEC_VERSIONS],
+					default: "latest",
+				});
 		},
 		async (argv) => {
-			await validateReport(argv.file as string, false);
+			await validateReport(
+				argv.file as string,
+				false,
+				argv["spec-version"] as SchemaSelector,
+			);
 		},
 	)
 	.command(
 		"validate-strict <file>",
-		"Strict validation with additionalProperties enforcement",
+		"Validate a CTRF report and throw on validation failure",
 		(yargs) => {
-			return yargs.positional("file", {
-				describe: "Path to the CTRF report file to validate",
-				type: "string",
-				demandOption: true,
-			});
+			return yargs
+				.positional("file", {
+					describe: "Path to the CTRF report file to validate",
+					type: "string",
+					demandOption: true,
+				})
+				.option("spec-version", {
+					describe: "CTRF specification version to validate against",
+					type: "string",
+					choices: ["latest", ...SUPPORTED_SPEC_VERSIONS],
+					default: "latest",
+				});
 		},
 		async (argv) => {
-			await validateReport(argv.file as string, true);
+			await validateReport(
+				argv.file as string,
+				true,
+				argv["spec-version"] as SchemaSelector,
+			);
 		},
 	)
 	.command(
