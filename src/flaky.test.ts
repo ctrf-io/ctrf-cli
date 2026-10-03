@@ -34,7 +34,8 @@ describe("identifyFlakyTests", () => {
 					.status("passed")
 					.duration(100)
 					.flaky(true)
-					.retries(2)
+					.addAttemptHistoryEntry({ attempt: 1, status: "failed" })
+					.addAttemptHistoryEntry({ attempt: 2, status: "failed" })
 					.build(),
 			)
 			.addTest(
@@ -43,7 +44,7 @@ describe("identifyFlakyTests", () => {
 					.status("passed")
 					.duration(100)
 					.flaky(true)
-					.retries(1)
+					.addAttemptHistoryEntry({ attempt: 1, status: "failed" })
 					.build(),
 			)
 			.addTest(
@@ -133,7 +134,11 @@ describe("identifyFlakyTests", () => {
 					.status("passed")
 					.duration(100)
 					.flaky(true)
-					.retries(5)
+					.addAttemptHistoryEntry({ attempt: 1, status: "failed" })
+					.addAttemptHistoryEntry({ attempt: 2, status: "failed" })
+					.addAttemptHistoryEntry({ attempt: 3, status: "failed" })
+					.addAttemptHistoryEntry({ attempt: 4, status: "failed" })
+					.addAttemptHistoryEntry({ attempt: 5, status: "failed" })
 					.build(),
 			)
 			.build();

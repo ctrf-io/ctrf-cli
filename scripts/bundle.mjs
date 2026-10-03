@@ -8,7 +8,8 @@ const distDirectory = path.join(projectRoot, "dist");
 const ctrfDistDirectory = path.dirname(
 	fileURLToPath(import.meta.resolve("ctrf")),
 );
-const schemaPattern = /^ctrf-schema-\d+\.\d+\.json$/;
+const schemaPattern = /^ctrf-schema-\d+\.\d+\.\d+\.json$/;
+const existingSchemaPattern = /^ctrf-schema-\d+\.\d+(?:\.\d+)?\.json$/;
 
 await mkdir(distDirectory, { recursive: true });
 
@@ -25,7 +26,7 @@ await build({
 });
 
 const existingSchemaFiles = (await readdir(distDirectory)).filter((file) =>
-	schemaPattern.test(file),
+	existingSchemaPattern.test(file),
 );
 
 await Promise.all(

@@ -1,6 +1,6 @@
 {
 	"reportFormat": "CTRF",
-	"specVersion": "1.0.0",
+	"specVersion": "0.1.0",
 	"results": {
 		"tool": {
 			"name": "example-runner",
@@ -41,11 +41,6 @@
 						"status": "failed",
 						"duration": 130,
 						"message": "Connection timeout"
-					},
-					{
-						"attempt": 3,
-						"status": "passed",
-						"duration": 140
 					}
 				]
 			}
