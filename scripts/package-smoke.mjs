@@ -21,7 +21,14 @@ const temporaryRoot = mkdtempSync(path.join(os.tmpdir(), "ctrf-cli-package-"));
 const packDirectory = path.join(temporaryRoot, "pack");
 const installDirectory = path.join(temporaryRoot, "install");
 const npmCacheDirectory = path.join(temporaryRoot, "npm-cache");
-const supportedSpecVersions = ["0.0.1", "0.0.2", "0.0.3", "0.0.4", "0.1.0"];
+const supportedSpecVersions = [
+	"0.0.1",
+	"0.0.2",
+	"0.0.3",
+	"0.0.4",
+	"0.1.0",
+	"0.2.0",
+];
 
 function run(command, args, options = {}) {
 	const result = spawnSync(command, args, {
@@ -145,6 +152,38 @@ try {
 		{ cwd: temporaryRoot },
 	);
 	assert.match(latestValidationResult.stdout, /is valid CTRF \(strict\)/);
+
+	const retryReport = path.join(projectRoot, "examples/with-retries.json");
+	for (const binary of ["ctrf", "ctrf-cli"]) {
+		const accepted = run(
+			"npx",
+			[
+				"--yes",
+				`--package=${tarballPath}`,
+				binary,
+				"validate-strict",
+				retryReport,
+				"--spec-version",
+				"0.2.0",
+			],
+			{ cwd: temporaryRoot },
+		);
+		assert.match(accepted.stdout, /is valid CTRF/);
+		const historical = run(
+			"npx",
+			[
+				"--yes",
+				`--package=${tarballPath}`,
+				binary,
+				"validate",
+				retryReport,
+				"--spec-version",
+				"0.1.0",
+			],
+			{ cwd: temporaryRoot, expectedStatus: 2 },
+		);
+		assert.match(historical.stderr, /must NOT have additional properties/);
+	}
 
 	const invalidReport = path.join(temporaryRoot, "invalid.json");
 	writeFileSync(
