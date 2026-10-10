@@ -76,6 +76,7 @@ describe("validateReport", () => {
 			const test = new TestBuilder()
 				.testId("authentication/login")
 				.executionId("execution-123")
+				.attemptId("attempt-2")
 				.name("logs in")
 				.status("passed")
 				.duration(100)
@@ -113,7 +114,7 @@ describe("validateReport", () => {
 			expect(validate(currentReport).valid).toBe(true);
 		});
 
-		it.each(["0.0.1", "0.0.2", "0.0.3", "0.0.4", "0.1.0"] as const)(
+		it.each(["0.0.1", "0.0.2", "0.0.3", "0.0.4", "0.1.0", "0.2.0"] as const)(
 			"should validate against CTRF %s",
 			async (specVersion) => {
 				fs.writeFileSync(
