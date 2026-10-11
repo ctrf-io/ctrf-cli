@@ -40,7 +40,7 @@ jobs:
         run: npm run format:check
 
   test-build:
-    name: Test + Build (Node ${{ matrix.node }})
+    name: Tests + CLI (Node ${{ matrix.node }})
     runs-on: ubuntu-latest
     needs: [quality]
     strategy:
@@ -56,10 +56,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Setup Node
+      - name: Setup tooling Node
         uses: actions/setup-node@v6
         with:
-          node-version: ${{ matrix.node }}
+          # Vitest 5 needs Node 22.12+; CLI runtime support still includes Node 20.
+          node-version: ${{ matrix.node == '20' && '26' || matrix.node }}
           cache: npm
 
       - name: Install
@@ -70,6 +71,15 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Setup CLI runtime
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - name: Install runtime dependencies only
+        run: npm ci --omit=dev
 
       - name: Test CLI - Merge
         run: node dist/cli.js merge test-reports

@@ -24,6 +24,9 @@ If you don't see your idea listed, and you think it fits into the goals of this 
 
 ## Local Development
 
+Use Node.js 22.12 or newer on a supported Node release for development and tests.
+The published CLI continues to support Node.js 20.19 or newer.
+
 To set up the project for local development:
 
 1. **Install dependencies**:
