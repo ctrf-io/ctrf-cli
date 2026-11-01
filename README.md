@@ -43,16 +43,16 @@ ctrf validate report.json
 
 ## Commands
 
-| Command | Purpose |
-|---------|---------|
-| `merge` | Merge multiple CTRF reports into a single report |
-| `validate` | Validate a CTRF report against the JSON schema |
-| `validate-strict` | Validate a report and throw on validation failure |
-| `filter` | Filter tests from a CTRF report based on criteria |
-| `generate-test-ids` | Generate deterministic UUIDs for all tests |
-| `generate-report-id` | Generate a unique UUID v4 identifier for report |
-| `add-insights` | Analyze trends and add insights across multiple reports |
-| `flaky` | Identify and output flaky tests |
+| Command              | Purpose                                                 |
+| -------------------- | ------------------------------------------------------- |
+| `merge`              | Merge multiple CTRF reports into a single report        |
+| `validate`           | Validate a CTRF report against the JSON schema          |
+| `validate-strict`    | Validate a report and throw on validation failure       |
+| `filter`             | Filter tests from a CTRF report based on criteria       |
+| `generate-test-ids`  | Generate deterministic UUIDs for all tests              |
+| `generate-report-id` | Generate a unique UUID v4 identifier for report         |
+| `add-insights`       | Analyze trends and add insights across multiple reports |
+| `flaky`              | Identify and output flaky tests                         |
 
 ## Exit Codes
 
