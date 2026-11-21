@@ -28,6 +28,7 @@ const supportedSpecVersions = [
 	"0.0.4",
 	"0.1.0",
 	"0.2.0",
+	"0.3.0",
 ];
 
 function run(command, args, options = {}) {
@@ -184,6 +185,80 @@ try {
 		);
 		assert.match(historical.stderr, /must NOT have additional properties/);
 	}
+
+	const currentReport = path.join(temporaryRoot, "current.json");
+	const current = {
+		reportFormat: "CTRF",
+		specVersion: "0.3.0",
+		reportId: "abcdefab-e29b-41d4-a716-446655440001",
+		provenance: {
+			inputs: [{ reportId: "abcdefab-e29b-41d4-a716-446655440002" }],
+		},
+		results: {
+			tool: { name: "package-control" },
+			summary: {
+				tests: 1,
+				passed: 1,
+				failed: 0,
+				skipped: 0,
+				pending: 0,
+				other: 0,
+				start: 100,
+				stop: 120,
+			},
+			errors: [{ message: "worker setup" }],
+			tests: [
+				{
+					name: "case",
+					description: "",
+					status: "passed",
+					duration: 1,
+					retries: 1,
+					retryAttempts: [
+						{
+							attempt: 1,
+							status: "failed",
+							threadId: "worker-1",
+							assertionFailures: [{ expected: "200", actual: "500" }],
+						},
+					],
+				},
+			],
+		},
+	};
+	writeFileSync(currentReport, JSON.stringify(current));
+	for (const binary of ["ctrf", "ctrf-cli"]) {
+		const accepted = run(
+			"npx",
+			[
+				"--yes",
+				`--package=${tarballPath}`,
+				binary,
+				"validate-strict",
+				currentReport,
+				"--spec-version",
+				"0.3.0",
+			],
+			{ cwd: temporaryRoot },
+		);
+		assert.match(accepted.stdout, /is valid CTRF/);
+	}
+	current.provenance.inputs[0].reportId = current.reportId;
+	writeFileSync(currentReport, JSON.stringify(current));
+	const selfReference = run(
+		"npx",
+		[
+			"--yes",
+			`--package=${tarballPath}`,
+			"ctrf",
+			"validate-strict",
+			currentReport,
+			"--spec-version",
+			"0.3.0",
+		],
+		{ cwd: temporaryRoot, expectedStatus: 2 },
+	);
+	assert.match(selfReference.stderr, /must not reference the current report/);
 
 	const invalidReport = path.join(temporaryRoot, "invalid.json");
 	writeFileSync(

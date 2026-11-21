@@ -114,22 +114,27 @@ describe("validateReport", () => {
 			expect(validate(currentReport).valid).toBe(true);
 		});
 
-		it.each(["0.0.1", "0.0.2", "0.0.3", "0.0.4", "0.1.0", "0.2.0"] as const)(
-			"should validate against CTRF %s",
-			async (specVersion) => {
-				fs.writeFileSync(
-					validReportPath,
-					JSON.stringify({ ...validReport, specVersion }, null, 2),
-				);
+		it.each([
+			"0.0.1",
+			"0.0.2",
+			"0.0.3",
+			"0.0.4",
+			"0.1.0",
+			"0.2.0",
+			"0.3.0",
+		] as const)("should validate against CTRF %s", async (specVersion) => {
+			fs.writeFileSync(
+				validReportPath,
+				JSON.stringify({ ...validReport, specVersion }, null, 2),
+			);
 
-				await validateReport(validReportPath, false, specVersion);
+			await validateReport(validReportPath, false, specVersion);
 
-				expect(exitSpy).toHaveBeenCalledWith(0);
-				expect(consoleLogSpy).toHaveBeenCalledWith(
-					expect.stringContaining("is valid CTRF"),
-				);
-			},
-		);
+			expect(exitSpy).toHaveBeenCalledWith(0);
+			expect(consoleLogSpy).toHaveBeenCalledWith(
+				expect.stringContaining("is valid CTRF"),
+			);
+		});
 
 		it("should apply the selected historical schema", async () => {
 			const reportWithLabels = {

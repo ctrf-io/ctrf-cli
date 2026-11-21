@@ -1,3 +1,4 @@
+import { validateStrict } from "ctrf";
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
@@ -75,6 +76,73 @@ describe("mergeReports", () => {
 
 	afterEach(() => {
 		fs.rmSync(tmpDir, { recursive: true, force: true });
+	});
+
+	describe("specification 0.3.0", () => {
+		function configureInputs(versions = ["0.3.0", "0.3.0"]) {
+			return [testReport1, testReport2].map((file, index) => {
+				const report = JSON.parse(fs.readFileSync(file, "utf8"));
+				report.reportFormat = "CTRF";
+				report.specVersion = versions[index];
+				report.reportId =
+					index === 0
+						? "abcdefab-e29b-41d4-a716-446655440001"
+						: "abcdefab-e29b-41d4-a716-446655440002";
+				fs.writeFileSync(file, JSON.stringify(report));
+				return report;
+			});
+		}
+
+		it("preserves later errors and duplicates without inflating counts, and records direct sources", async () => {
+			const reports = configureInputs();
+			reports[1].results.errors = [
+				{ message: "worker setup", extra: { vendor: { attempt: 2 } } },
+				{ message: "worker setup", extra: { vendor: { attempt: 2 } } },
+			];
+			reports[0].provenance = {
+				inputs: [{ reportId: "abcdefab-e29b-41d4-a716-446655440003" }],
+			};
+			fs.writeFileSync(testReport1, JSON.stringify(reports[0]));
+			fs.writeFileSync(testReport2, JSON.stringify(reports[1]));
+			const output = path.join(tmpDir, "merged.json");
+			await mergeReports(testReportDir, output, true);
+			const merged = JSON.parse(fs.readFileSync(output, "utf8"));
+			validateStrict(merged, { specVersion: "0.3.0" });
+			expect(merged.results.errors).toEqual(reports[1].results.errors);
+			expect(merged.results.summary.tests).toBe(3);
+			expect(merged.provenance?.inputs).toEqual(
+				reports.map(({ reportId }) => ({ reportId })),
+			);
+			expect(reports.map(({ reportId }) => reportId)).not.toContain(
+				merged.reportId,
+			);
+			expect(JSON.parse(fs.readFileSync(testReport1, "utf8"))).toEqual(
+				reports[0],
+			);
+		});
+
+		it("omits provenance when a direct source has no report ID", async () => {
+			const reports = configureInputs();
+			delete reports[1].reportId;
+			fs.writeFileSync(testReport2, JSON.stringify(reports[1]));
+			const output = path.join(tmpDir, "merged.json");
+			await mergeReports(testReportDir, output, true);
+			const merged = JSON.parse(fs.readFileSync(output, "utf8"));
+			expect(merged).not.toHaveProperty("provenance");
+			validateStrict(merged, { specVersion: "0.3.0" });
+		});
+
+		it.each([
+			["0.2.0", "0.3.0"],
+			["0.3.0", "0.2.0"],
+		])("keeps accepting mixed %s and %s inputs", async (first, second) => {
+			configureInputs([first, second]);
+			const output = path.join(tmpDir, "merged.json");
+			await mergeReports(testReportDir, output, true);
+			const merged = JSON.parse(fs.readFileSync(output, "utf8"));
+			expect(merged.specVersion).toBe(first);
+			expect(merged.results.summary.tests).toBe(3);
+		});
 	});
 
 	describe("output path handling", () => {
