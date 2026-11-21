@@ -1,3 +1,4 @@
+import { generateReportId, type CTRFReport, validateStrict } from "ctrf";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -75,41 +76,62 @@ export async function mergeReports(
 			console.log(`Created output directory: ${outputDirPath}`);
 		}
 
-		const mergedReport = ctrfReportFiles
-			.map((file) => {
-				console.log("Merging report:", file);
-				const filePath = path.join(directoryPath, file);
-				const fileContent = fs.readFileSync(filePath, "utf8");
-				return JSON.parse(fileContent);
-			})
-			.reduce(
-				(acc, curr) => {
-					if (!acc.results) {
-						return curr;
-					}
+		const reports: CTRFReport[] = ctrfReportFiles.map((file) => {
+			console.log("Merging report:", file);
+			const filePath = path.join(directoryPath, file);
+			const fileContent = fs.readFileSync(filePath, "utf8");
+			return JSON.parse(fileContent);
+		});
+		const specVersion = reports[0].specVersion;
+		const currentInputs = reports.every(
+			(report) => report.specVersion === "0.3.0",
+		);
+		const inputs = new Map<string, { reportId: string }>();
+		if (specVersion === "0.3.0") {
+			for (const report of reports) {
+				if (currentInputs) validateStrict(report, { specVersion });
+				if (report.reportId) {
+					const id = report.reportId.toLowerCase();
+					if (!inputs.has(id)) inputs.set(id, { reportId: report.reportId });
+				}
+			}
+		}
+		const completeProvenance = reports.every((report) => report.reportId);
+		const mergedReport = reports.reduce((acc, curr) => {
+			acc.results.summary.tests += curr.results.summary.tests;
+			acc.results.summary.passed += curr.results.summary.passed;
+			acc.results.summary.failed += curr.results.summary.failed;
+			acc.results.summary.skipped += curr.results.summary.skipped;
+			acc.results.summary.pending += curr.results.summary.pending;
+			acc.results.summary.other += curr.results.summary.other;
 
-					acc.results.summary.tests += curr.results.summary.tests;
-					acc.results.summary.passed += curr.results.summary.passed;
-					acc.results.summary.failed += curr.results.summary.failed;
-					acc.results.summary.skipped += curr.results.summary.skipped;
-					acc.results.summary.pending += curr.results.summary.pending;
-					acc.results.summary.other += curr.results.summary.other;
+			acc.results.tests.push(...curr.results.tests);
+			if (curr.results.errors?.length) {
+				acc.results.errors = [
+					...(acc.results.errors ?? []),
+					...curr.results.errors,
+				];
+			}
 
-					acc.results.tests.push(...curr.results.tests);
-
-					acc.results.summary.start = Math.min(
-						acc.results.summary.start,
-						curr.results.summary.start,
-					);
-					acc.results.summary.stop = Math.max(
-						acc.results.summary.stop,
-						curr.results.summary.stop,
-					);
-
-					return acc;
-				},
-				{ results: null },
+			acc.results.summary.start = Math.min(
+				acc.results.summary.start,
+				curr.results.summary.start,
 			);
+			acc.results.summary.stop = Math.max(
+				acc.results.summary.stop,
+				curr.results.summary.stop,
+			);
+
+			return acc;
+		}, reports.shift() as CTRFReport);
+
+		if (specVersion === "0.3.0" && ctrfReportFiles.length > 1) {
+			mergedReport.reportId = generateReportId();
+			delete mergedReport.provenance;
+			if (completeProvenance)
+				mergedReport.provenance = { inputs: [...inputs.values()] };
+			if (currentInputs) validateStrict(mergedReport, { specVersion });
+		}
 
 		fs.writeFileSync(outputPath, JSON.stringify(mergedReport, null, 2));
 

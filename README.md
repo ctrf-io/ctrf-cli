@@ -99,7 +99,7 @@ ctrf validate-strict <file-path> [--spec-version <version>]
 **Parameters:**
 
 - `file-path`: Path to CTRF report file (required)
-- `--spec-version`: CTRF specification version to validate against. Supports `0.0.1`, `0.0.2`, `0.0.3`, `0.0.4`, `0.1.0`, `0.2.0`, and `latest` (default).
+- `--spec-version`: CTRF specification version to validate against. Supports `0.0.1`, `0.0.2`, `0.0.3`, `0.0.4`, `0.1.0`, `0.2.0`, `0.3.0`, and `latest` (default).
 
 **Modes:**
 
